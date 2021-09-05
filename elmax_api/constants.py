@@ -1,16 +1,20 @@
 """Constants for the Elmax Cloud service client."""
 
-BASE_URL = "https://cloud.elmaxsrl.it"
+# TODO: uncomment the following
+#BASE_URL = "https://cloud.elmaxsrl.it"
+BASE_URL = "https://test.fabiozingaro.com"
 
 ENDPOINT_DEVICES = "api/ext/devices"
-ENDPOINT_LOGIN = "api/ext/login"
+# TODO: Seems not the corrent one
+#ENDPOINT_LOGIN = "api/ext/login"
+ENDPOINT_LOGIN = "api/auth/login"
 ENDPOINT_STATUS_ENTITY_ID = "api/ext/status"
 ENDPOINT_ENTITY_ID_COMMAND = "api/ext"
 ENDPOINT_DISCOVERY = "api/ext/discovery"
 
 version = "0.1.0-test-client"
 
-USER_AGENT= f"PythonElmax/{version}"
+USER_AGENT = f"elmax-api/{version}"
 
 COMMAND_ON = "on"
 COMMAND_OFF = "off"

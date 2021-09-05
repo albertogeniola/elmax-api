@@ -3,13 +3,16 @@
 
 class ElmaxError(Exception):
     """General ElmxError exception occurred."""
-
     pass
 
 
 class ElmaxConnectionError(ElmaxError):
     """When a connection error is encountered."""
+    pass
 
+
+class ElmaxBadLoginError(ElmaxError):
+    """Occurs when a login attempt fails"""
     pass
 
 

@@ -1,51 +1,26 @@
 """Test the authentication process."""
+import os
+
 import pytest
-from pytest_httpx import HTTPXMock
 
-from elmax import Elmax, exceptions
+from elmax_api.exceptions import ElmaxBadLoginError
+from elmax_api.http import Elmax
 
-RESPONSE_AUTHENTICATION_VALID = {
-    "token": "JWT 123456.123456",
-    "user": {"_id": "1234567", "email": "user@elmax-cloud.test", "role": "user"},
-}
-
-RESPONSE_AUTHENTICATION_INVALID = {
-    "user": {"_id": "1234567", "email": "user@elmax-cloud.test", "role": "user"},
-}
+BAD_USERNAME = "thisIsWrong@gmail.com"
+BAD_PASSWORD = "fakePassword"
+GOOD_USERNAME = os.environ.get("ELMAX_USERNAME")
+GOOD_PASSWORD = os.environ.get("ELMAX_PASSWORD")
 
 
 @pytest.mark.asyncio
-async def test_authentication_valid(httpx_mock: HTTPXMock):
-    """Test a valid authentication process."""
-    httpx_mock.add_response(json=RESPONSE_AUTHENTICATION_VALID)
-
-    client = Elmax(username="username", password="password")
-    await client.connect()
-
-    assert client.is_authenticated is True
+async def test_wrong_credentials():
+    client = Elmax(username=BAD_USERNAME, password=BAD_PASSWORD)
+    with pytest.raises(ElmaxBadLoginError):
+        await client.login()
 
 
 @pytest.mark.asyncio
-async def test_authentication_not_json(httpx_mock: HTTPXMock):
-    """Test if invalid response is handled correctly."""
-    httpx_mock.add_response(json="This is my UTF-8 content")
-
-    with pytest.raises(exceptions.ElmaxConnectionError) as execinfo:
-        client = Elmax(username="username", password="password")
-        await client.connect()
-
-    assert execinfo.value.args[0] == "Credentials are not valid"
-    assert client.is_authenticated is False
-
-
-@pytest.mark.asyncio
-async def test_authentication_incomplete(httpx_mock: HTTPXMock):
-    """Test autnetication with an incomplete response."""
-    httpx_mock.add_response(json=RESPONSE_AUTHENTICATION_INVALID)
-
-    with pytest.raises(exceptions.ElmaxConnectionError) as execinfo:
-        client = Elmax(username="username", password="password")
-        await client.connect()
-
-    assert execinfo.value.args[0] == "Credentials are not valid"
-    assert client.is_authenticated is False
+async def test_good_credentials():
+    client = Elmax(username=GOOD_USERNAME, password=GOOD_PASSWORD)
+    jwt_data = await client.login()
+    assert isinstance(jwt_data, dict)

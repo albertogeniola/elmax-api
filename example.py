@@ -1,21 +1,22 @@
 """Sample script to use the Python API client for the Elmax Cloud service."""
 import asyncio
 import pprint
+import os
+from elmax_api.http import Elmax
 
-from elmax import Elmax
 
-USERNAME = "username"
-PASSWORD = "password"
-PIN = "000000"
-CONTROL_PANEL = "7e67sadfe35fgsdfg445d68b4fd4105d1be44d"
+# Get configuration parameters from ENV VARS
+USERNAME = os.environ.get("ELMAX_USERNAME") or "replaceWithYourUsername"
+PASSWORD = os.environ.get("ELMAX_PASSWORD") or "replaceWithYourPassword"
+#PIN = "000000"
+#CONTROL_PANEL = "7e67sadfe35fgsdfg445d68b4fd4105d1be44d"
+
 
 async def main():
     """The main part of the example script."""
 
     client = Elmax(username=USERNAME, password=PASSWORD)
-    await client.connect()
-    print("Is authenticated?", client.authorized)
-
+    await client.login()
     control_panels = await client.list_control_panels()
 
     print("Available control panels:")
