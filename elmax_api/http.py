@@ -1,43 +1,58 @@
+import asyncio
+import functools
 import logging
 import time
-from functools import wraps
-from typing import Dict
-import decorator
+from enum import Enum
+from typing import Dict, Any, Callable, Awaitable, List, Optional
 
+import decorator
 import httpx
 import jwt
 from yarl import URL
 
 from elmax_api import exceptions
-from elmax_api.constants import BASE_URL, ENDPOINT_LOGIN, USER_AGENT, ENDPOINT_DEVICES
-from elmax_api.exceptions import ElmaxBadLoginError, ElmaxError
+from elmax_api.constants import BASE_URL, ENDPOINT_LOGIN, USER_AGENT, ENDPOINT_DEVICES, ENDPOINT_DISCOVERY
+from elmax_api.exceptions import ElmaxBadLoginError, ElmaxError, ElmaxApiError, ElmaxNetworkError
+from elmax_api.model.panel import ControlPanel
 from elmax_api.model.registry import DeviceRegistry
 
 _LOGGER = logging.getLogger(__name__)
 _JWT_ALGS = ["HS256"]
-headers = {
-    "User-Agent": USER_AGENT,
-    "Accept": "application/json, text/plain, */*",
-    "Content-Type": "application/json"
-}
 
 
-@decorator.decorator
-async def async_auth(coro,
-                     self,  # type: Elmax
+def async_auth(func,
+               *method_args,
+               **method_kwargs):
+    """
+    Asynchronous decorator used to check validity of JWT token.
+    It takes care to verify the validity of a JWT token before issuing the method call.
+    In case the JWT is expired, or close to expiration date, it tries to renew it.
+    """
+
+    async def helper(func, *args, **kwargs):
+        if asyncio.iscoroutinefunction(func):
+            return await func(*args, **kwargs)
+        else:
+            return func(*args, **kwargs)
+
+    @functools.wraps(func,
                      *method_args,
-                     **method_kwargs):
-    # Check whether the client has a valid token to be used. We consider valid tokens with expiration time
-    # > 10minutes. If not, try to login first and then proceed with the function call.
-    now = time.time()
-    if (self.token_expiration_time - now) < 600:
-        _LOGGER.info("The API was not authorized yet or the token is going to be expired soon. "
-                     "The token will be refreshed now.")
-        await self.login()
+                     **method_kwargs)
+    async def wrapper(*args, **kwargs):
+        # Check whether the client has a valid token to be used. We consider valid tokens with expiration time
+        # > 10minutes. If not, try to login first and then proceed with the function call.
+        now = time.time()
+        _instance = args[0]
+        assert isinstance(_instance, Elmax)
+        if (_instance.token_expiration_time - now) < 600:
+            _LOGGER.info("The API was not authorized yet or the token is going to be expired soon. "
+                         "The token will be refreshed now.")
+            await _instance.login()
+        # At this point, we assume the client has a valid token to use for authorized APIs. So let's use it.
+        result = await helper(func, *args, **kwargs)
+        return result
 
-    # At this point, we assume the client has a valid token to use for authorized APIs. So let's use it.
-    method_output = await coro(self, *method_args, **method_kwargs)
-    return method_output
+    return wrapper
 
 
 class Elmax(object):
@@ -59,49 +74,47 @@ class Elmax(object):
 
         self.registry = DeviceRegistry()
 
-    async def login(self) -> Dict:
+    async def _request(self,
+                       method: 'Elmax.HttpMethod',
+                       url: str,
+                       data: Optional[Dict] = None,
+                       authorized: bool = False) -> Dict:
         """
-        Connects to the API ENDPOINT and returns the access token to be used within the client
+        Executes a HTTP API request against a given endpoint, parses the output and returns the
+        json to the caller. It handles most basic IO exceptions.
         """
-        url = URL(BASE_URL) / ENDPOINT_LOGIN
-        data = {
-            "username": self._username,
-            "password": self._password,
+        headers = {
+            "User-Agent": USER_AGENT,
+            "Accept": "application/json",
+            "Content-Type": "application/json"
         }
+        if authorized:
+            headers["Authorization"] = f"JWT {self._raw_jwt}"
+
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.post(str(url), headers=headers, json=data)
-                _LOGGER.debug("Login Status code:", response.status_code)
+                if method == Elmax.HttpMethod.GET:
+                    response = await client.get(str(url), headers=headers)
+                elif method == Elmax.HttpMethod.POST:
+                    response = await client.post(str(url), headers=headers, json=data)
+                else:
+                    raise ValueError("Invalid/Unhandled method. Expecting GET or POST")
+
+                _LOGGER.debug(f"HTTP Request %s %s -> Status code: %d", str(method), url, response.status_code)
                 if response.status_code != 200:
-                    # Login failed
-                    _LOGGER.error("Login failed. Status code was %d.", response.status_code)
-                    raise ElmaxBadLoginError()
-
-                response_data = response.json()
-                if "token" not in response_data:
-                    raise ValueError("Missing token parameter in json response")
-
-                jwt_token = response_data["token"]
-                if not jwt_token.startswith("JWT "):
-                    raise ValueError("API did not return JWT token as expected")
-                jt = jwt_token.split("JWT ")[1]
-
-                # We do not need to verify the signature as this is usually something the server
-                # needs to do. We will just decode it to get information about user/claims.
-                # Moreover, since the JWT is obtained over a HTTPS channel, we do not need to verify
-                # its integrity/confidentiality as the ssl does this for us
-                self._jwt = jwt.decode(jt, algorithms=_JWT_ALGS, options={"verify_signature": False})
-                self._raw_jwt = jt  # keep an encoded version of the JWT for convenience and performance
-                return self._jwt
-
-        # Let the caller handle/recover from these exceptions
-        except ElmaxError as e:
-            raise
+                    _LOGGER.error("Api call failed. Method=%s, Url=%s, Data=%s. Response code=%d. Response content=%s",
+                                  method,
+                                  url,
+                                  str(data),
+                                  response.status_code,
+                                  str(response.content))
+                    raise ElmaxApiError(status_code=response.status_code)
+                return response.json()
 
         # Wrap any other HTTP/NETWORK error
         except httpx.ConnectError as e:
-            _LOGGER.exception("An unhandled error occurred while logging in")
-            raise exceptions.ElmaxError(f"Login to {BASE_URL} failed")
+            _LOGGER.exception("An unhandled error occurred while executing API Call.")
+            raise ElmaxNetworkError(f"A network error occurred")
 
     def is_authenticated(self) -> bool:
         """
@@ -122,30 +135,80 @@ class Elmax(object):
         return self._jwt.get("exp", 0)
 
     @async_auth
-    async def logout(self):
+    async def logout(self) -> None:
         """
         Invalidate the current token
         """
         # TODO: is there any API to call to invalidate a token?
         self._jwt = None
 
+    async def login(self) -> Dict:
+        """
+        Connects to the API ENDPOINT and returns the access token to be used within the client
+        """
+        url = URL(BASE_URL) / ENDPOINT_LOGIN
+        data = {
+            "username": self._username,
+            "password": self._password,
+        }
+        try:
+            response_data = await self._request(method=Elmax.HttpMethod.POST, url=url, data=data, authorized=False)
+        except ElmaxApiError as e:
+            if e.status_code == 401:
+                raise ElmaxBadLoginError()
+            raise
+
+        if "token" not in response_data:
+            raise ValueError("Missing token parameter in json response")
+
+        jwt_token = response_data["token"]
+        if not jwt_token.startswith("JWT "):
+            raise ValueError("API did not return JWT token as expected")
+        jt = jwt_token.split("JWT ")[1]
+
+        # We do not need to verify the signature as this is usually something the server
+        # needs to do. We will just decode it to get information about user/claims.
+        # Moreover, since the JWT is obtained over a HTTPS channel, we do not need to verify
+        # its integrity/confidentiality as the ssl does this for us
+        self._jwt = jwt.decode(jt, algorithms=_JWT_ALGS, options={"verify_signature": False})
+        self._raw_jwt = jt  # keep an encoded version of the JWT for convenience and performance
+        return self._jwt
+
     @async_auth
-    async def list_control_panels(self):
+    async def list_control_panels(self) -> List[ControlPanel]:
         """
         Lists the control panels available for the given user
         """
+        res = []
         url = URL(BASE_URL) / ENDPOINT_DEVICES
+
+        response_data = await self._request(method=Elmax.HttpMethod.GET, url=url, authorized=True)
+        for response_entry in response_data:
+            res.append(ControlPanel.from_api_response(response_entry))
+        return res
+
+    class HttpMethod(Enum):
+        GET = 'get'
+        POST = 'post'
+
+    """
+    @async_auth
+    async def get_endpoints(self, control_panel_id, pin):
+        url = URL(BASE_URL) / ENDPOINT_DISCOVERY / control_panel_id / str(pin)
         headers["Authorization"] = f"JWT {self._raw_jwt}"
 
         async with httpx.AsyncClient() as client:
             response = await client.get(str(url), headers=headers)
 
-        _LOGGER.debug("List-Control-Panels Status code:", response.status_code)
-        for response_entry in response.json():
-            control_panel = ControlPanel.from_api_response(response_entry)
-            self.registry.register(control_panel)
+        response_data = response.json()
 
-        # TODO: unregister old panels that are no more available
+        if response_data[ZONE]:
+            self._zones = response_data[ZONE]
+        if response_data[OUTPUT]:
+            self._outputs = response_data[OUTPUT]
+        if response_data[AREA]:
+            self._areas = response_data[AREA]
+    """
 
     # async def list_control_panels(self):
     #     """List all available control panels."""

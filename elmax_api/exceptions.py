@@ -2,12 +2,22 @@
 
 
 class ElmaxError(Exception):
-    """General ElmxError exception occurred."""
+    """General ElmaxError exception occurred."""
     pass
 
 
-class ElmaxConnectionError(ElmaxError):
-    """When a connection error is encountered."""
+class ElmaxApiError(Exception):
+    """Occurs when an API returns an unexpected return code"""
+    def __init__(self, status_code: int):
+        self._status_code = status_code
+
+    @property
+    def status_code(self):
+        return self._status_code
+
+
+class ElmaxNetworkError(ElmaxError):
+    """When a network error is encountered."""
     pass
 
 
@@ -16,7 +26,3 @@ class ElmaxBadLoginError(ElmaxError):
     pass
 
 
-class ElmaxNoDataAvailable(ElmaxError):
-    """When no data is available."""
-
-    pass
