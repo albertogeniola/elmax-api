@@ -3,16 +3,14 @@ import functools
 import logging
 import time
 from enum import Enum
-from typing import Dict, Any, Callable, Awaitable, List, Optional
+from typing import Dict, List, Optional
 
-import decorator
 import httpx
 import jwt
 from yarl import URL
 
-from elmax_api import exceptions
-from elmax_api.constants import BASE_URL, ENDPOINT_LOGIN, USER_AGENT, ENDPOINT_DEVICES, ENDPOINT_DISCOVERY
-from elmax_api.exceptions import ElmaxBadLoginError, ElmaxError, ElmaxApiError, ElmaxNetworkError
+from elmax_api.constants import BASE_URL, ENDPOINT_LOGIN, USER_AGENT, ENDPOINT_DEVICES
+from elmax_api.exceptions import ElmaxBadLoginError, ElmaxApiError, ElmaxNetworkError
 from elmax_api.model.panel import ControlPanel
 from elmax_api.model.registry import DeviceRegistry
 
@@ -61,11 +59,14 @@ class Elmax(object):
     def __init__(
             self,
             username: str,
-            password: str,
-            control_panel_id: str = None
+            password: str
     ):
-        """Initialize the connection."""
-        self.control_panel_id = control_panel_id
+        """Initialize the connection.
+
+        Args:
+            username: Username to use for Elmax Authentication
+            password: Password to use for Elmax Authentication
+        """
         self._username = username
         self._password = password
         self._raw_jwt = None
@@ -82,6 +83,20 @@ class Elmax(object):
         """
         Executes a HTTP API request against a given endpoint, parses the output and returns the
         json to the caller. It handles most basic IO exceptions.
+        If the API returns a non 200 response, this method raises an `ElmaxApiError`
+
+        Args:
+            method: HTTP method to use for the HTTP request
+            url: Target request URL
+            data: Json data/Data to post in POST messages. Ignored when issuing GET requests
+            authorized: When set, the request is performed passing the stored authorization token
+
+        Returns:
+            Dict: The dictionary object containing authenticated JWT data
+
+        Raises:
+            ElmaxApiError: Whenever a non 200 return code is returned by the remote server
+            ElmaxNetworkError: If the http request could not be completed due to a network error
         """
         headers = {
             "User-Agent": USER_AGENT,
@@ -116,9 +131,13 @@ class Elmax(object):
             _LOGGER.exception("An unhandled error occurred while executing API Call.")
             raise ElmaxNetworkError(f"A network error occurred")
 
+    @property
     def is_authenticated(self) -> bool:
         """
-        Returns whether the client has been granted a JWT which is still valid (not expired)
+        Specifies whether the client has been granted a JWT which is still valid (not expired)
+
+        Returns:
+            bool: True if there is a valid JWT token, False if there's no token or if it is expired
         """
         if self._jwt is None:
             # The user did not login yet
@@ -130,21 +149,33 @@ class Elmax(object):
 
     @property
     def token_expiration_time(self) -> int:
+        """
+        Returns the expiration timestamp of the stored JWT token.
+
+        Returns:
+            int: The timestamp of expiration or -1 if no token was present.
+        """
         if self._jwt is None:
             return 0
-        return self._jwt.get("exp", 0)
+        return self._jwt.get("exp", -1)
 
     @async_auth
     async def logout(self) -> None:
         """
         Invalidate the current token
+
+        TODO:
+            * Check if there is a HTTP API to invalidate the current token
         """
-        # TODO: is there any API to call to invalidate a token?
         self._jwt = None
 
     async def login(self) -> Dict:
         """
         Connects to the API ENDPOINT and returns the access token to be used within the client
+
+        Raises:
+            ElmaxBadLoginError: if the login attempt fails due to bad username/password credentials
+            ValueError: in case the json response is malformed
         """
         url = URL(BASE_URL) / ENDPOINT_LOGIN
         data = {
@@ -178,6 +209,9 @@ class Elmax(object):
     async def list_control_panels(self) -> List[ControlPanel]:
         """
         Lists the control panels available for the given user
+
+        Returns:
+            List[ControlPanel]: The list of fetched `ControlPanel` devices discovered via the API
         """
         res = []
         url = URL(BASE_URL) / ENDPOINT_DEVICES
@@ -188,6 +222,7 @@ class Elmax(object):
         return res
 
     class HttpMethod(Enum):
+        """Enumerative helper for supported HTTP methods of the Elmax API"""
         GET = 'get'
         POST = 'post'
 
