@@ -16,4 +16,3 @@ async def test_list_control_panels():
     client = Elmax(username=USERNAME, password=PASSWORD)
     panels = await client.list_control_panels()
     assert len(panels) > 0
-
