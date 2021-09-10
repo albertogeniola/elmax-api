@@ -4,9 +4,9 @@ from typing import Dict
 class ControlPanel:
     """Representation of an available control panel."""
 
-    def __init__(self, hash: str, online: bool, name_by_user: Dict[str, str]):
+    def __init__(self, devicehash: str, online: bool, name_by_user: Dict[str, str]):
         """Initialize the new control panel."""
-        self._hash = hash
+        self._hash = devicehash
         self._online = online
         self._names = name_by_user
 
@@ -20,7 +20,11 @@ class ControlPanel:
 
     def get_name_by_user(self, username: str) -> str:
         if username not in self._names:
-            ValueError("Cannot find the name associated by user %s to device %s", username, self._hash)
+            ValueError(
+                "Cannot find the name associated by user %s to device %s",
+                username,
+                self._hash,
+            )
         return self._names.get(username)
 
     @staticmethod
@@ -28,13 +32,13 @@ class ControlPanel:
         """Create a new control panel from the API json response"""
         # Convert the data structure so that we have a dictionary of names by user
         name_by_user = dict()
-        for l in response_entry.get('username', []):
-            username = l.get('name')
-            name = l.get('label')
+        for entry in response_entry.get("username", []):
+            username = entry.get("name")
+            name = entry.get("label")
             name_by_user[username] = name
 
         control_panel = ControlPanel(
-            hash=response_entry["hash"],
+            devicehash=response_entry["hash"],
             online=bool(response_entry["centrale_online"]),
             name_by_user=name_by_user,
         )

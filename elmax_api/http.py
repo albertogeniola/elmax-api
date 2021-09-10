@@ -18,24 +18,20 @@ _LOGGER = logging.getLogger(__name__)
 _JWT_ALGS = ["HS256"]
 
 
-def async_auth(func,
-               *method_args,
-               **method_kwargs):
+def async_auth(func, *method_args, **method_kwargs):
     """
     Asynchronous decorator used to check validity of JWT token.
     It takes care to verify the validity of a JWT token before issuing the method call.
     In case the JWT is expired, or close to expiration date, it tries to renew it.
     """
 
-    async def helper(func, *args, **kwargs):
-        if asyncio.iscoroutinefunction(func):
-            return await func(*args, **kwargs)
+    async def helper(f, *args, **kwargs):
+        if asyncio.iscoroutinefunction(f):
+            return await f(*args, **kwargs)
         else:
-            return func(*args, **kwargs)
+            return f(*args, **kwargs)
 
-    @functools.wraps(func,
-                     *method_args,
-                     **method_kwargs)
+    @functools.wraps(func, *method_args, **method_kwargs)
     async def wrapper(*args, **kwargs):
         # Check whether the client has a valid token to be used. We consider valid tokens with expiration time
         # > 10minutes. If not, try to login first and then proceed with the function call.
@@ -43,8 +39,10 @@ def async_auth(func,
         _instance = args[0]
         assert isinstance(_instance, Elmax)
         if (_instance.token_expiration_time - now) < 600:
-            _LOGGER.info("The API was not authorized yet or the token is going to be expired soon. "
-                         "The token will be refreshed now.")
+            _LOGGER.info(
+                "The API was not authorized yet or the token is going to be expired soon. "
+                "The token will be refreshed now."
+            )
             await _instance.login()
         # At this point, we assume the client has a valid token to use for authorized APIs. So let's use it.
         result = await helper(func, *args, **kwargs)
@@ -56,11 +54,7 @@ def async_auth(func,
 class Elmax(object):
     """A class for handling the data retrieval."""
 
-    def __init__(
-            self,
-            username: str,
-            password: str
-    ):
+    def __init__(self, username: str, password: str):
         """Initialize the connection.
 
         Args:
@@ -75,11 +69,13 @@ class Elmax(object):
 
         self.registry = DeviceRegistry()
 
-    async def _request(self,
-                       method: 'Elmax.HttpMethod',
-                       url: str,
-                       data: Optional[Dict] = None,
-                       authorized: bool = False) -> Dict:
+    async def _request(
+        self,
+        method: "Elmax.HttpMethod",
+        url: str,
+        data: Optional[Dict] = None,
+        authorized: bool = False,
+    ) -> Dict:
         """
         Executes a HTTP API request against a given endpoint, parses the output and returns the
         json to the caller. It handles most basic IO exceptions.
@@ -101,7 +97,7 @@ class Elmax(object):
         headers = {
             "User-Agent": USER_AGENT,
             "Accept": "application/json",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
         if authorized:
             headers["Authorization"] = f"JWT {self._raw_jwt}"
@@ -115,21 +111,28 @@ class Elmax(object):
                 else:
                     raise ValueError("Invalid/Unhandled method. Expecting GET or POST")
 
-                _LOGGER.debug(f"HTTP Request %s %s -> Status code: %d", str(method), url, response.status_code)
+                _LOGGER.debug(
+                    "HTTP Request %s %s -> Status code: %d",
+                    str(method),
+                    url,
+                    response.status_code,
+                )
                 if response.status_code != 200:
-                    _LOGGER.error("Api call failed. Method=%s, Url=%s, Data=%s. Response code=%d. Response content=%s",
-                                  method,
-                                  url,
-                                  str(data),
-                                  response.status_code,
-                                  str(response.content))
+                    _LOGGER.error(
+                        "Api call failed. Method=%s, Url=%s, Data=%s. Response code=%d. Response content=%s",
+                        method,
+                        url,
+                        str(data),
+                        response.status_code,
+                        str(response.content),
+                    )
                     raise ElmaxApiError(status_code=response.status_code)
                 return response.json()
 
         # Wrap any other HTTP/NETWORK error
-        except httpx.ConnectError as e:
+        except httpx.ConnectError:
             _LOGGER.exception("An unhandled error occurred while executing API Call.")
-            raise ElmaxNetworkError(f"A network error occurred")
+            raise ElmaxNetworkError("A network error occurred")
 
     @property
     def is_authenticated(self) -> bool:
@@ -183,7 +186,9 @@ class Elmax(object):
             "password": self._password,
         }
         try:
-            response_data = await self._request(method=Elmax.HttpMethod.POST, url=url, data=data, authorized=False)
+            response_data = await self._request(
+                method=Elmax.HttpMethod.POST, url=url, data=data, authorized=False
+            )
         except ElmaxApiError as e:
             if e.status_code == 401:
                 raise ElmaxBadLoginError()
@@ -201,8 +206,12 @@ class Elmax(object):
         # needs to do. We will just decode it to get information about user/claims.
         # Moreover, since the JWT is obtained over a HTTPS channel, we do not need to verify
         # its integrity/confidentiality as the ssl does this for us
-        self._jwt = jwt.decode(jt, algorithms=_JWT_ALGS, options={"verify_signature": False})
-        self._raw_jwt = jt  # keep an encoded version of the JWT for convenience and performance
+        self._jwt = jwt.decode(
+            jt, algorithms=_JWT_ALGS, options={"verify_signature": False}
+        )
+        self._raw_jwt = (
+            jt  # keep an encoded version of the JWT for convenience and performance
+        )
         return self._jwt
 
     @async_auth
@@ -216,15 +225,18 @@ class Elmax(object):
         res = []
         url = URL(BASE_URL) / ENDPOINT_DEVICES
 
-        response_data = await self._request(method=Elmax.HttpMethod.GET, url=url, authorized=True)
+        response_data = await self._request(
+            method=Elmax.HttpMethod.GET, url=url, authorized=True
+        )
         for response_entry in response_data:
             res.append(ControlPanel.from_api_response(response_entry))
         return res
 
     class HttpMethod(Enum):
         """Enumerative helper for supported HTTP methods of the Elmax API"""
-        GET = 'get'
-        POST = 'post'
+
+        GET = "get"
+        POST = "post"
 
     """
     @async_auth

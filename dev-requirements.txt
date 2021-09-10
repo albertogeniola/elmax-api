@@ -6,5 +6,5 @@ pytest==6.2.5
 pytest-httpx==0.13.0
 pytest-asyncio==0.15.1
 sphinx==4.1.2
-
+flake8==3.9.2
 
