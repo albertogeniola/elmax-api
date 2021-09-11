@@ -3,9 +3,12 @@ name: Lint
 on:
   push:
     branches: [ development ]
+    paths:
+      - '!docs/**'
   pull_request:
     branches: [ development ]
-
+    paths:
+      - '!docs/**'
 jobs:
   build:
 
