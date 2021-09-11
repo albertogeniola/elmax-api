@@ -9,7 +9,7 @@ import httpx
 import jwt
 from yarl import URL
 
-from elmax_api.constants import BASE_URL, ENDPOINT_LOGIN, USER_AGENT, ENDPOINT_DEVICES
+from elmax_api.constants import BASE_URL, ENDPOINT_LOGIN, USER_AGENT, ENDPOINT_DEVICES, ENDPOINT_DISCOVERY
 from elmax_api.exceptions import ElmaxBadLoginError, ElmaxApiError, ElmaxNetworkError
 from elmax_api.model.panel import ControlPanel
 from elmax_api.model.registry import DeviceRegistry
@@ -232,30 +232,18 @@ class Elmax(object):
             res.append(ControlPanel.from_api_response(response_entry))
         return res
 
+    @async_auth
+    async def list_panel_devices(self, control_panel_id: str):
+        url = URL(BASE_URL) / ENDPOINT_DISCOVERY / control_panel_id # / str(pin)
+        response_data = self._request(Elmax.HttpMethod.GET, url=url, authorized=True)
+        # TODO:
+        pass
+
     class HttpMethod(Enum):
         """Enumerative helper for supported HTTP methods of the Elmax API"""
 
         GET = "get"
         POST = "post"
-
-    """
-    @async_auth
-    async def get_endpoints(self, control_panel_id, pin):
-        url = URL(BASE_URL) / ENDPOINT_DISCOVERY / control_panel_id / str(pin)
-        headers["Authorization"] = f"JWT {self._raw_jwt}"
-
-        async with httpx.AsyncClient() as client:
-            response = await client.get(str(url), headers=headers)
-
-        response_data = response.json()
-
-        if response_data[ZONE]:
-            self._zones = response_data[ZONE]
-        if response_data[OUTPUT]:
-            self._outputs = response_data[OUTPUT]
-        if response_data[AREA]:
-            self._areas = response_data[AREA]
-    """
 
     # async def list_control_panels(self):
     #     """List all available control panels."""
