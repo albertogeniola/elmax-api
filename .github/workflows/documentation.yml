@@ -2,7 +2,7 @@ name: Publish Documentation
 
 on:
   push:
-    branches: [ * ]
+    #branches: [ main ]
     paths: [docs/**]  # This should run always as AUTODOCS builds API references based on
                       # python classes
 jobs:
