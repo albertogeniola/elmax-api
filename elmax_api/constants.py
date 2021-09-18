@@ -10,7 +10,7 @@ BASE_URL = "https://test.fabiozingaro.com"
 ENDPOINT_DEVICES = "api/ext/devices"
 # TODO: Seems not the corrent one
 # ENDPOINT_LOGIN = "api/ext/login"
-ENDPOINT_LOGIN = "api/auth/login"
+ENDPOINT_LOGIN = "api/ext/login"
 ENDPOINT_STATUS_ENTITY_ID = "api/ext/status"
 ENDPOINT_ENTITY_ID_COMMAND = "api/ext"
 ENDPOINT_DISCOVERY = "api/ext/discovery"

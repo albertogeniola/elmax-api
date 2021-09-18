@@ -11,8 +11,7 @@ from yarl import URL
 
 from elmax_api.constants import BASE_URL, ENDPOINT_LOGIN, USER_AGENT, ENDPOINT_DEVICES, ENDPOINT_DISCOVERY
 from elmax_api.exceptions import ElmaxBadLoginError, ElmaxApiError, ElmaxNetworkError
-from elmax_api.model.panel import ControlPanel
-from elmax_api.model.registry import DeviceRegistry
+from elmax_api.model.panel import PanelEntry, PanelStatus
 
 _LOGGER = logging.getLogger(__name__)
 _JWT_ALGS = ["HS256"]
@@ -67,14 +66,13 @@ class Elmax(object):
         self._jwt = None
         self._areas = self._outputs = self._zones = []
 
-        self.registry = DeviceRegistry()
 
     async def _request(
-        self,
-        method: "Elmax.HttpMethod",
-        url: str,
-        data: Optional[Dict] = None,
-        authorized: bool = False,
+            self,
+            method: "Elmax.HttpMethod",
+            url: str,
+            data: Optional[Dict] = None,
+            authorized: bool = False,
     ) -> Dict:
         """
         Executes a HTTP API request against a given endpoint, parses the output and returns the
@@ -127,6 +125,14 @@ class Elmax(object):
                         str(response.content),
                     )
                     raise ElmaxApiError(status_code=response.status_code)
+
+                # TODO: the current API version does not return an error description nor an error http
+                #  status code for invalid logins. Instead, an empty body is returned. In that case we
+                #  assume the login failed due to invalid user/pass combination
+                response_content = response.text
+                if response_content == '':
+                    raise ElmaxBadLoginError()
+
                 return response.json()
 
         # Wrap any other HTTP/NETWORK error
@@ -215,12 +221,12 @@ class Elmax(object):
         return self._jwt
 
     @async_auth
-    async def list_control_panels(self) -> List[ControlPanel]:
+    async def list_control_panels(self) -> List[PanelEntry]:
         """
         Lists the control panels available for the given user
 
         Returns:
-            List[ControlPanel]: The list of fetched `ControlPanel` devices discovered via the API
+            List[PanelEntry]: The list of fetched `ControlPanel` devices discovered via the API
         """
         res = []
         url = URL(BASE_URL) / ENDPOINT_DEVICES
@@ -229,15 +235,23 @@ class Elmax(object):
             method=Elmax.HttpMethod.GET, url=url, authorized=True
         )
         for response_entry in response_data:
-            res.append(ControlPanel.from_api_response(response_entry))
+            res.append(PanelEntry.from_api_response(response_entry=response_entry))
         return res
 
     @async_auth
-    async def list_panel_devices(self, control_panel_id: str):
-        url = URL(BASE_URL) / ENDPOINT_DISCOVERY / control_panel_id # / str(pin)
-        response_data = self._request(Elmax.HttpMethod.GET, url=url, authorized=True)
-        # TODO:
-        pass
+    async def get_panel_status(self, control_panel_id: str, pin: str = "000000") -> PanelStatus:
+        """
+        Fetches the control panel status
+        Args:
+            control_panel_id: Id of the control panel to fetch status from
+            pin: security ping
+
+        Returns: The current status of the control panel
+        """
+        url = URL(BASE_URL) / ENDPOINT_DISCOVERY / control_panel_id / str(pin)
+        response_data = await self._request(Elmax.HttpMethod.GET, url=url, authorized=True)
+        panel_status = PanelStatus.from_api_response(response_entry=response_data)
+        return panel_status
 
     class HttpMethod(Enum):
         """Enumerative helper for supported HTTP methods of the Elmax API"""
@@ -250,7 +264,6 @@ class Elmax(object):
     #     await self.get_control_panels()
     #
     #     control_panels_list = []
-    #     for control_panel in self.registry.devices():
     #         control_panels_list.append(
     #             {
     #                 "online": control_panel.online,
