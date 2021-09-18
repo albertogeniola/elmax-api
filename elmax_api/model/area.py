@@ -1,7 +1,9 @@
 from typing import Dict
 
+from elmax_api.model.endpoint import DeviceEndpoint
 
-class Area():
+
+class Area(DeviceEndpoint):
     """Representation of an Area configuration"""
 
     def __init__(self,
@@ -11,28 +13,9 @@ class Area():
                  name: str,
                  status: str,
                  armed_status: str):
-        self._endpoint_id = endpoint_id
-        self._visible = visible
-        self._index = index
-        self._name = name
+        super().__init__(endpoint_id=endpoint_id, visible=visible, index=index, name=name)
         self._status = status
         self._armed_status = armed_status
-
-    @property
-    def endpoint_id(self) -> str:
-        return self._endpoint_id
-
-    @property
-    def visible(self) -> bool:
-        return self._visible
-
-    @property
-    def index(self) -> int:
-        return self._index
-
-    @property
-    def name(self) -> str:
-        return self._name
 
     @property
     def status(self) -> str:
@@ -41,6 +24,12 @@ class Area():
     @property
     def armed_status(self) -> str:
         return self._armed_status
+
+    def __eq__(self, other):
+        super_equals = super().__eq__(other)
+        if not super_equals:
+            return False
+        return self.status == other.status and self.armed_status==other.armed_status
 
     @staticmethod
     def from_api_response(response_entry: Dict) -> 'Area':

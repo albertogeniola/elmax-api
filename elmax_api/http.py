@@ -9,9 +9,10 @@ import httpx
 import jwt
 from yarl import URL
 
-from elmax_api.constants import BASE_URL, ENDPOINT_LOGIN, USER_AGENT, ENDPOINT_DEVICES, ENDPOINT_DISCOVERY
+from elmax_api.constants import BASE_URL, ENDPOINT_LOGIN, USER_AGENT, ENDPOINT_DEVICES, ENDPOINT_DISCOVERY, \
+    ENDPOINT_STATUS_ENTITY_ID
 from elmax_api.exceptions import ElmaxBadLoginError, ElmaxApiError, ElmaxNetworkError
-from elmax_api.model.panel import PanelEntry, PanelStatus
+from elmax_api.model.panel import PanelEntry, PanelStatus, EndpointStatus
 
 _LOGGER = logging.getLogger(__name__)
 _JWT_ALGS = ["HS256"]
@@ -239,12 +240,15 @@ class Elmax(object):
         return res
 
     @async_auth
-    async def get_panel_status(self, control_panel_id: str, pin: str = "000000") -> PanelStatus:
+    async def get_panel_status(self,
+                               control_panel_id: str,
+                               pin: Optional[str] = "000000") -> PanelStatus:
         """
-        Fetches the control panel status
+        Fetches the control panel status.
+
         Args:
             control_panel_id: Id of the control panel to fetch status from
-            pin: security ping
+            pin: security pin (optional)
 
         Returns: The current status of the control panel
         """
@@ -252,6 +256,22 @@ class Elmax(object):
         response_data = await self._request(Elmax.HttpMethod.GET, url=url, authorized=True)
         panel_status = PanelStatus.from_api_response(response_entry=response_data)
         return panel_status
+
+    @async_auth
+    async def get_endpoint_status(self, endpoint_id: str) -> EndpointStatus:
+        """
+        Fetches the panel status only for the given endpoint_id
+
+        Args:
+            control_panel_id: Id of the control panel to fetch status from
+            endpoint_id: Id of the device to fetch data for
+
+        Returns: The current status of the given endpoint
+        """
+        url = URL(BASE_URL) / ENDPOINT_STATUS_ENTITY_ID / endpoint_id
+        response_data = await self._request(Elmax.HttpMethod.GET, url=url, authorized=True)
+        status = EndpointStatus.from_api_response(response_entry=response_data)
+        return status
 
     class HttpMethod(Enum):
         """Enumerative helper for supported HTTP methods of the Elmax API"""

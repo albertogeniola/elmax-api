@@ -1,7 +1,9 @@
 from typing import Dict
 
+from elmax_api.model.endpoint import DeviceEndpoint
 
-class Scene():
+
+class Scene(DeviceEndpoint):
     """Representation of a Scene configuration"""
 
     def __init__(self,
@@ -9,26 +11,7 @@ class Scene():
                  visible: bool,
                  index: int,
                  name: str):
-        self._endpoint_id = endpoint_id
-        self._visible = visible
-        self._index = index
-        self._name = name
-
-    @property
-    def endpoint_id(self) -> str:
-        return self._endpoint_id
-
-    @property
-    def visible(self) -> bool:
-        return self._visible
-
-    @property
-    def index(self) -> int:
-        return self._index
-
-    @property
-    def name(self) -> str:
-        return self._name
+        super().__init__(endpoint_id=endpoint_id, visible=visible, index=index, name=name)
 
     @staticmethod
     def from_api_response(response_entry: Dict) -> 'Scene':

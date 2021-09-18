@@ -2,6 +2,7 @@ from typing import Dict, List, Any
 
 from elmax_api.model.actuator import Actuator
 from elmax_api.model.area import Area
+from elmax_api.model.endpoint import DeviceEndpoint
 from elmax_api.model.goup import Group
 from elmax_api.model.scene import Scene
 from elmax_api.model.zone import Zone
@@ -124,6 +125,16 @@ class PanelStatus:
     def covers(self) -> List[Any]:  # TODO: Update type once defined
         return self._covers
 
+    @property
+    def all_endpoints(self) -> List[DeviceEndpoint]:
+        res = []
+        res.extend(self.actuators)
+        res.extend(self.areas)
+        res.extend(self.groups)
+        res.extend(self.scenes)
+        res.extend(self.zones)
+        return res
+
     @staticmethod
     def from_api_response(response_entry: Dict) -> 'PanelStatus':
         """Create a new panel status object from the API json response"""
@@ -133,11 +144,100 @@ class PanelStatus:
             release=response_entry.get('release'),
             cover_feature=response_entry.get('tappFeature'),
             scene_feature=response_entry.get('sceneFeature'),
-            zones=response_entry.get('zone'),
-            actuators=response_entry.get('uscite'),
-            areas=response_entry.get('aree'),
-            covers=response_entry.get('tapparelle'),
-            groups=response_entry.get('groups'),
-            scenes=response_entry.get('scenari')
+            zones=[Zone.from_api_response(x) for x in response_entry.get('zone', [])],
+            actuators=[Actuator.from_api_response(x) for x in response_entry.get('uscite', [])],
+            areas=[Area.from_api_response(x) for x in response_entry.get('aree', [])],
+            #covers=[Cover.from_api_response(x) for x in response_entry.get('tapparelle', [])], # TODO: enable as soon as we have implemented covers
+            covers=response_entry.get('tapparelle'), # TODO: remove as soon as we have implemented covers
+            groups=[Group.from_api_response(x) for x in response_entry.get('gruppi', [])],
+            scenes=[Scene.from_api_response(x) for x in response_entry.get('scenari', [])]
         )
         return panel_status
+
+class EndpointStatus:
+    """Representation of an endpoint status"""
+
+    def __init__(self,
+                 release: str,
+                 cover_feature: bool,
+                 scene_feature: bool,
+                 zones: List[Zone],
+                 actuators: List[Actuator],
+                 areas: List[Area],
+                 groups: List[Group],
+                 scenes: List[Scene],
+                 # TODO: Implement covers
+                 covers: List[Any]):
+
+        self._release = release
+        self._cover_feature = cover_feature
+        self._scene_feature = scene_feature
+        self._zones = zones
+        self._actuators = actuators
+        self._areas = areas
+        self._groups = groups
+        self._scenes = scenes
+        self._covers = covers
+
+    @property
+    def release(self) -> str:
+        return self._release
+
+    @property
+    def cover_feature(self) -> bool:
+        return self._cover_feature
+
+    @property
+    def scene_feature(self) -> bool:
+        return self._scene_feature
+
+    @property
+    def zones(self) -> List[Zone]:
+        return self._zones
+
+    @property
+    def actuators(self) -> List[Actuator]:
+        return self._actuators
+
+    @property
+    def areas(self) -> List[Area]:
+        return self._areas
+
+    @property
+    def groups(self) -> List[Group]:
+        return self._groups
+
+    @property
+    def scenes(self) -> List[Scene]:
+        return self._scenes
+
+    @property
+    def covers(self) -> List[Any]:  # TODO: Update type once defined
+        return self._covers
+
+    @property
+    def all_endpoints(self) -> List[DeviceEndpoint]:
+        res = []
+        res.extend(self.actuators)
+        res.extend(self.areas)
+        res.extend(self.groups)
+        res.extend(self.scenes)
+        res.extend(self.zones)
+        return res
+
+    @staticmethod
+    def from_api_response(response_entry: Dict) -> 'EndpointStatus':
+        """Create a new endpoint status object from the API json response"""
+        status = EndpointStatus(
+            release=response_entry.get('release'),
+            cover_feature=response_entry.get('tappFeature'),
+            scene_feature=response_entry.get('sceneFeature'),
+            zones=[Zone.from_api_response(x) for x in response_entry.get('zone', [])],
+            actuators=[Actuator.from_api_response(x) for x in response_entry.get('uscite', [])],
+            areas=[Area.from_api_response(x) for x in response_entry.get('aree', [])],
+            #covers=[Cover.from_api_response(x) for x in response_entry.get('tapparelle', [])], # TODO: enable as soon as we have implemented covers
+            covers=response_entry.get('tapparelle'), # TODO: remove as soon as we have implemented covers
+            groups=[Group.from_api_response(x) for x in response_entry.get('gruppi', [])],
+            scenes=[Scene.from_api_response(x) for x in response_entry.get('scenari', [])]
+        )
+        return status

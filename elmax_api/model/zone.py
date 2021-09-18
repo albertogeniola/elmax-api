@@ -1,7 +1,9 @@
 from typing import Dict
 
+from elmax_api.model.endpoint import DeviceEndpoint
 
-class Zone():
+
+class Zone(DeviceEndpoint):
     """Representation of a zone configuration"""
 
     def __init__(self,
@@ -11,28 +13,9 @@ class Zone():
                  name: str,
                  opened: bool,
                  excluded: bool):
-        self._endpoint_id = endpoint_id
-        self._visible = visible
-        self._index = index
-        self._name = name
+        super().__init__(endpoint_id=endpoint_id, visible=visible, index=index, name=name)
         self._opened = opened
         self._excluded = excluded
-
-    @property
-    def endpoint_id(self) -> str:
-        return self._endpoint_id
-
-    @property
-    def visible(self) -> bool:
-        return self._visible
-
-    @property
-    def index(self) -> int:
-        return self._index
-
-    @property
-    def name(self) -> str:
-        return self._name
 
     @property
     def opened(self) -> bool:
@@ -41,6 +24,12 @@ class Zone():
     @property
     def excluded(self) -> bool:
         return self._excluded
+
+    def __eq__(self, other):
+        super_equals = super().__eq__(other)
+        if not super_equals:
+            return False
+        return self.opened==other.opened and self.excluded==other.excluded
 
     @staticmethod
     def from_api_response(response_entry: Dict) -> 'Zone':
