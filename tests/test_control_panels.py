@@ -1,4 +1,4 @@
-"""Test the authentication process."""
+"""Test control panel functionalities."""
 import os
 
 import pytest

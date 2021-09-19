@@ -10,8 +10,9 @@ import jwt
 from yarl import URL
 
 from elmax_api.constants import BASE_URL, ENDPOINT_LOGIN, USER_AGENT, ENDPOINT_DEVICES, ENDPOINT_DISCOVERY, \
-    ENDPOINT_STATUS_ENTITY_ID
+    ENDPOINT_STATUS_ENTITY_ID, ENDPOINT_ENTITY_ID_COMMAND
 from elmax_api.exceptions import ElmaxBadLoginError, ElmaxApiError, ElmaxNetworkError
+from elmax_api.model.command import Command
 from elmax_api.model.panel import PanelEntry, PanelStatus, EndpointStatus
 
 _LOGGER = logging.getLogger(__name__)
@@ -52,10 +53,14 @@ def async_auth(func, *method_args, **method_kwargs):
 
 
 class Elmax(object):
-    """A class for handling the data retrieval."""
+    """
+    Elmax HTTP client.
+    This class takes care of handling API calls against the ELMAX API cloud endpoint.
+    It handles data marshalling/unmarshalling, login and token renewal upon expiration.
+    """
 
     def __init__(self, username: str, password: str):
-        """Initialize the connection.
+        """Client constructor.
 
         Args:
             username: Username to use for Elmax Authentication
@@ -273,58 +278,21 @@ class Elmax(object):
         status = EndpointStatus.from_api_response(response_entry=response_data)
         return status
 
+    @async_auth
+    async def execute_command(self, endpoint_id: str, command: Command) -> None:
+        """
+        Executes a command against the given endpoint
+        Args:
+            endpoint_id: EndpointID against which the command should be issued
+            command: Command to issue
+
+        Returns: None
+        """
+        url = URL(BASE_URL) / ENDPOINT_ENTITY_ID_COMMAND / endpoint_id / command.value
+        response_data = await self._request(Elmax.HttpMethod.POST, url=url, authorized=True)
+
     class HttpMethod(Enum):
         """Enumerative helper for supported HTTP methods of the Elmax API"""
 
         GET = "get"
         POST = "post"
-
-    # async def list_control_panels(self):
-    #     """List all available control panels."""
-    #     await self.get_control_panels()
-    #
-    #     control_panels_list = []
-    #         control_panels_list.append(
-    #             {
-    #                 "online": control_panel.online,
-    #                 "hash": control_panel.hash,
-    #                 "name": control_panel.name,
-    #             }
-    #         )
-    #
-    #     return control_panels_list
-    #
-    # async def get_endpoints(self, control_panel_id, pin):
-    #     """List all endpoints of a control panel."""
-    #     if self.authorized is False:
-    #         await self.connect()
-    #
-    #     url = URL(BASE_URL) / ENDPOINT_DISCOVERY / control_panel_id / str(pin)
-    #
-    #     headers["Authorization"] = self.authorization
-    #
-    #     async with httpx.AsyncClient() as client:
-    #         response = await client.get(str(url), headers=headers)
-    #
-    #     response_data = response.json()
-    #
-    #     if response_data[ZONE]:
-    #         self._zones = response_data[ZONE]
-    #     if response_data[OUTPUT]:
-    #         self._outputs = response_data[OUTPUT]
-    #     if response_data[AREA]:
-    #         self._areas = response_data[AREA]
-    #
-    # async def get_status(self, endpoint_id):
-    #     """Get the status of an endpoint."""
-    #     if self.authorized is False:
-    #         self.connect()
-    #
-    #     url = URL(BASE_URL) / ENDPOINT_STATUS_ENTITY_ID / endpoint_id
-    #
-    #     headers["Authorization"] = self.authorization
-    #
-    #     async with httpx.AsyncClient() as client:
-    #         response = await client.get(str(url), headers=headers)
-    #
-    #     return response.json()
