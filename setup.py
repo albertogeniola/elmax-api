@@ -22,7 +22,7 @@ with open(path.join(here, "requirements.txt"), encoding="utf-8") as f:
 setup(
     name=target_name,
     version=target_version,
-    packages=find_packages(include=("elmax_api",)),
+    packages=find_packages(exclude=("tests",)),
     url=target_url,
     license=target_license,
     author=target_author,
