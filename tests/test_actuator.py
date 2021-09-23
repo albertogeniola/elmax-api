@@ -1,20 +1,12 @@
 """Test the actuator functionalities."""
 import asyncio
-import os
 
 import pytest
 
 from elmax_api.http import Elmax
-from elmax_api.model.actuator import Actuator
-from elmax_api.model.area import Area
 from elmax_api.model.command import Command
-from elmax_api.model.goup import Group
 from elmax_api.model.panel import PanelStatus, PanelEntry
-from elmax_api.model.scene import Scene
-from elmax_api.model.zone import Zone
-
-USERNAME = os.environ.get("ELMAX_USERNAME")
-PASSWORD = os.environ.get("ELMAX_PASSWORD")
+from tests import USERNAME, PASSWORD
 
 
 @pytest.mark.asyncio
