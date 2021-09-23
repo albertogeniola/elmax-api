@@ -32,8 +32,9 @@ async def test_device_command():
         await client.execute_command(endpoint_id=endpoint_id, command=command)
 
     # Ensure all the actuators switched correctly
+    await asyncio.sleep(3)
     panel = await client.get_panel_status(control_panel_id=entry.hash)  # type: PanelStatus
-    await asyncio.sleep(1)
+
     for actuator in panel.actuators:
         expected_status = not actuator_status[actuator.endpoint_id]
         assert actuator.opened==expected_status
