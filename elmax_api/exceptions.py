@@ -28,3 +28,8 @@ class ElmaxBadLoginError(ElmaxError):
     """Occurs when a login attempt fails"""
 
     pass
+
+
+class ElmaxBadPinError(ElmaxError):
+    """Occurs when a BAD pin is used with the discovery api"""
+    pass

@@ -11,7 +11,7 @@ from yarl import URL
 
 from elmax_api.constants import BASE_URL, ENDPOINT_LOGIN, USER_AGENT, ENDPOINT_DEVICES, ENDPOINT_DISCOVERY, \
     ENDPOINT_STATUS_ENTITY_ID, ENDPOINT_ENTITY_ID_COMMAND
-from elmax_api.exceptions import ElmaxBadLoginError, ElmaxApiError, ElmaxNetworkError
+from elmax_api.exceptions import ElmaxBadLoginError, ElmaxApiError, ElmaxNetworkError, ElmaxBadPinError
 from elmax_api.model.command import Command
 from elmax_api.model.panel import PanelEntry, PanelStatus, EndpointStatus
 
@@ -258,7 +258,11 @@ class Elmax(object):
         Returns: The current status of the control panel
         """
         url = URL(BASE_URL) / ENDPOINT_DISCOVERY / control_panel_id / str(pin)
-        response_data = await self._request(Elmax.HttpMethod.GET, url=url, authorized=True)
+        try:
+            response_data = await self._request(Elmax.HttpMethod.GET, url=url, authorized=True)
+        except ElmaxApiError as e:
+            raise ElmaxBadPinError() from e
+
         panel_status = PanelStatus.from_api_response(response_entry=response_data)
         return panel_status
 
@@ -290,7 +294,7 @@ class Elmax(object):
         """
         url = URL(BASE_URL) / ENDPOINT_ENTITY_ID_COMMAND / endpoint_id / command.value
         response_data = await self._request(Elmax.HttpMethod.POST, url=url, authorized=True)
-
+                
     class HttpMethod(Enum):
         """Enumerative helper for supported HTTP methods of the Elmax API"""
 
