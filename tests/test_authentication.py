@@ -22,3 +22,6 @@ async def test_good_credentials():
     client = Elmax(username=USERNAME, password=PASSWORD)
     jwt_data = await client.login()
     assert isinstance(jwt_data, dict)
+
+    username = client.get_authenticated_username()
+    assert username == USERNAME
