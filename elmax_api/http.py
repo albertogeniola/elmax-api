@@ -72,7 +72,6 @@ class Elmax(object):
         self._jwt = None
         self._areas = self._outputs = self._zones = []
 
-
     async def _request(
             self,
             method: "Elmax.HttpMethod",
@@ -294,6 +293,15 @@ class Elmax(object):
         """
         url = URL(BASE_URL) / ENDPOINT_ENTITY_ID_COMMAND / endpoint_id / command.value
         response_data = await self._request(Elmax.HttpMethod.POST, url=url, authorized=True)
+
+    def get_authenticated_username(self) -> Optional[str]:
+        """
+        Returns the username associated to the current JWT token, if any.
+        In case the user is not authenticated, returns None
+        """
+        if self._jwt is None:
+            return None
+        return self._jwt.get("email")
                 
     class HttpMethod(Enum):
         """Enumerative helper for supported HTTP methods of the Elmax API"""
