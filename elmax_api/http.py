@@ -255,6 +255,9 @@ class Elmax(object):
             pin: security pin (optional)
 
         Returns: The current status of the control panel
+
+        Raises:
+             ElmaxBadPinError: Whenever the provided PIN is incorrect or in any way refused by the server
         """
         url = URL(BASE_URL) / ENDPOINT_DISCOVERY / control_panel_id / str(pin)
         try:
