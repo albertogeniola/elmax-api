@@ -39,10 +39,17 @@ def async_auth(func, *method_args, **method_kwargs):
         now = time.time()
         _instance = args[0]
         assert isinstance(_instance, Elmax)
-        if (_instance.token_expiration_time - now) < 600:
+        exp_time = _instance.token_expiration_time
+        if exp_time == 0:
+            _LOGGER.warning("The API client was not authorized yet. Login will be attempted.")
+            await _instance.login()
+        elif exp_time < 0:
+            _LOGGER.warning("The API client token is expired. Login will be attempted.")
+            await _instance.login()
+        elif (exp_time - now) < 600:
             _LOGGER.info(
-                "The API was not authorized yet or the token is going to be expired soon. "
-                "The token will be refreshed now."
+                "The API client token is going to be expired soon. "
+                "Login will be attempted right now to refresh it."
             )
             await _instance.login()
         # At this point, we assume the client has a valid token to use for authorized APIs. So let's use it.
