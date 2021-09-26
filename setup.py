@@ -41,6 +41,7 @@ setup(
         "Source": target_url,
         "Tracker": target_url,
     },
+    data_files=[('.', ['requirements.txt'])],
     install_requires=requirements,
     python_requires=">=3.7",
     test_suite="tests",
