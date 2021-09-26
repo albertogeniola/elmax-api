@@ -10,7 +10,7 @@ import jwt
 from yarl import URL
 
 from elmax_api.constants import BASE_URL, ENDPOINT_LOGIN, USER_AGENT, ENDPOINT_DEVICES, ENDPOINT_DISCOVERY, \
-    ENDPOINT_STATUS_ENTITY_ID, ENDPOINT_ENTITY_ID_COMMAND
+    ENDPOINT_STATUS_ENTITY_ID, ENDPOINT_ENTITY_ID_COMMAND, DEFAULT_HTTP_TIMEOUT
 from elmax_api.exceptions import ElmaxBadLoginError, ElmaxApiError, ElmaxNetworkError, ElmaxBadPinError
 from elmax_api.model.command import Command
 from elmax_api.model.panel import PanelEntry, PanelStatus, EndpointStatus
@@ -85,6 +85,7 @@ class Elmax(object):
             url: str,
             data: Optional[Dict] = None,
             authorized: bool = False,
+            timeout: float = DEFAULT_HTTP_TIMEOUT
     ) -> Dict:
         """
         Executes a HTTP API request against a given endpoint, parses the output and returns the
@@ -113,7 +114,7 @@ class Elmax(object):
             headers["Authorization"] = f"JWT {self._raw_jwt}"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with httpx.AsyncClient(timeout=DEFAULT_HTTP_TIMEOUT) as client:
                 if method == Elmax.HttpMethod.GET:
                     response = await client.get(str(url), headers=headers)
                 elif method == Elmax.HttpMethod.POST:

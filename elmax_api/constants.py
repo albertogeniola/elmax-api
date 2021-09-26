@@ -18,18 +18,8 @@ ENDPOINT_DISCOVERY = "api/ext/discovery"
 # User agent
 USER_AGENT = f"elmax-api/{__version__}"
 
-# Command constants
-COMMAND_ON = "on"
-COMMAND_OFF = "off"
-COMMAND_ARM = "ins"
-COMMAND_DISARM = "dis"
+# DEFAULT HTTP TIMEOUT
+DEFAULT_HTTP_TIMEOUT = 10.0
 
-# Model constants
-ZONE = "zone"
-OUTPUT = "uscite"
-AREA = "aree"
-UNIT_TYPES = [
-    AREA,
-    OUTPUT,
-    ZONE,
-]
+
+
