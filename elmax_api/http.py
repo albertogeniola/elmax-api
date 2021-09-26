@@ -3,7 +3,7 @@ import functools
 import logging
 import time
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 import httpx
 import jwt
@@ -285,16 +285,23 @@ class Elmax(object):
         return status
 
     @async_auth
-    async def execute_command(self, endpoint_id: str, command: Command) -> None:
+    async def execute_command(self, endpoint_id: str, command: Union[Command, str]) -> None:
         """
         Executes a command against the given endpoint
         Args:
             endpoint_id: EndpointID against which the command should be issued
-            command: Command to issue
+            command: Command to issue. Can either be a string or a `Command` enum value
 
         Returns: None
         """
-        url = URL(BASE_URL) / ENDPOINT_ENTITY_ID_COMMAND / endpoint_id / command.value
+        if isinstance(command, Command):
+            cmd_str = command.value
+        elif isinstance(command, str):
+            cmd_str = command
+        else:
+            raise ValueError("Invalid/unsupported command")
+
+        url = URL(BASE_URL) / ENDPOINT_ENTITY_ID_COMMAND / endpoint_id / cmd_str
         response_data = await self._request(Elmax.HttpMethod.POST, url=url, authorized=True)
 
     def get_authenticated_username(self) -> Optional[str]:
