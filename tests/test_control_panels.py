@@ -6,6 +6,7 @@ from elmax_api.exceptions import ElmaxBadPinError
 from elmax_api.http import Elmax
 from elmax_api.model.actuator import Actuator
 from elmax_api.model.area import Area
+from elmax_api.model.cover import Cover
 from elmax_api.model.goup import Group
 from elmax_api.model.panel import PanelStatus
 from elmax_api.model.scene import Scene
@@ -85,5 +86,7 @@ async def test_single_device_status():
             assert epstatus.scenes[0] == endpoint
         elif isinstance(endpoint, Zone):
             assert epstatus.zones[0] == endpoint
+        elif isinstance(endpoint, Cover):
+            assert epstatus.covers[0] == endpoint
         else:
             raise ValueError("Unexpected/unhandled endpoint")

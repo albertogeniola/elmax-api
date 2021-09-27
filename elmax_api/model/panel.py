@@ -2,6 +2,7 @@ from typing import Dict, List, Any
 
 from elmax_api.model.actuator import Actuator
 from elmax_api.model.area import Area
+from elmax_api.model.cover import Cover
 from elmax_api.model.endpoint import DeviceEndpoint
 from elmax_api.model.goup import Group
 from elmax_api.model.scene import Scene
@@ -66,8 +67,7 @@ class PanelStatus:
                  areas: List[Area],
                  groups: List[Group],
                  scenes: List[Scene],
-                 # TODO: Implement covers
-                 covers: List[Any]):
+                 covers: List[Cover]):
 
         self._panel_id = panel_id
         self._user_email = user_email
@@ -122,7 +122,7 @@ class PanelStatus:
         return self._scenes
 
     @property
-    def covers(self) -> List[Any]:  # TODO: Update type once defined
+    def covers(self) -> List[Cover]:
         return self._covers
 
     @property
@@ -147,8 +147,7 @@ class PanelStatus:
             zones=[Zone.from_api_response(x) for x in response_entry.get('zone', [])],
             actuators=[Actuator.from_api_response(x) for x in response_entry.get('uscite', [])],
             areas=[Area.from_api_response(x) for x in response_entry.get('aree', [])],
-            #covers=[Cover.from_api_response(x) for x in response_entry.get('tapparelle', [])], # TODO: enable as soon as we have implemented covers
-            covers=response_entry.get('tapparelle'), # TODO: remove as soon as we have implemented covers
+            covers=[Cover.from_api_response(x) for x in response_entry.get('tapparelle', [])],
             groups=[Group.from_api_response(x) for x in response_entry.get('gruppi', [])],
             scenes=[Scene.from_api_response(x) for x in response_entry.get('scenari', [])]
         )
@@ -166,8 +165,7 @@ class EndpointStatus:
                  areas: List[Area],
                  groups: List[Group],
                  scenes: List[Scene],
-                 # TODO: Implement covers
-                 covers: List[Any]):
+                 covers: List[Cover]):
 
         self._release = release
         self._cover_feature = cover_feature
@@ -212,7 +210,7 @@ class EndpointStatus:
         return self._scenes
 
     @property
-    def covers(self) -> List[Any]:  # TODO: Update type once defined
+    def covers(self) -> List[Cover]:
         return self._covers
 
     @property
@@ -235,8 +233,7 @@ class EndpointStatus:
             zones=[Zone.from_api_response(x) for x in response_entry.get('zone', [])],
             actuators=[Actuator.from_api_response(x) for x in response_entry.get('uscite', [])],
             areas=[Area.from_api_response(x) for x in response_entry.get('aree', [])],
-            #covers=[Cover.from_api_response(x) for x in response_entry.get('tapparelle', [])], # TODO: enable as soon as we have implemented covers
-            covers=response_entry.get('tapparelle'), # TODO: remove as soon as we have implemented covers
+            covers=[Cover.from_api_response(x) for x in response_entry.get('tapparelle', [])],
             groups=[Group.from_api_response(x) for x in response_entry.get('gruppi', [])],
             scenes=[Scene.from_api_response(x) for x in response_entry.get('scenari', [])]
         )
