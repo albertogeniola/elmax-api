@@ -133,6 +133,7 @@ class PanelStatus:
         res.extend(self.groups)
         res.extend(self.scenes)
         res.extend(self.zones)
+        res.extend(self.covers)
         return res
 
     @staticmethod
