@@ -14,3 +14,4 @@ class AlarmStatus(Enum):
     ARMED_STANDBY = "Inserita e a riposo"
     NOT_ARMED_TRIGGERED = "non inserita e zone aperte"
     NOT_ARMED_NOT_TRIGGERED = "non inserita e pronta all'inserimento"
+    NOT_ARMED_NOT_TRIGGERABLE = "non inserita e non pronta all'inserimento"
