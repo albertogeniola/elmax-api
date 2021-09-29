@@ -266,12 +266,16 @@ class Elmax(object):
 
         Raises:
              ElmaxBadPinError: Whenever the provided PIN is incorrect or in any way refused by the server
+             ElmaxApiError: in case of underlying api call failure
         """
         url = URL(BASE_URL) / ENDPOINT_DISCOVERY / control_panel_id / str(pin)
         try:
             response_data = await self._request(Elmax.HttpMethod.GET, url=url, authorized=True)
         except ElmaxApiError as e:
-            raise ElmaxBadPinError() from e
+            if e.status_code == 401:
+                raise ElmaxBadPinError() from e
+            else:
+                raise
 
         panel_status = PanelStatus.from_api_response(response_entry=response_data)
         return panel_status
