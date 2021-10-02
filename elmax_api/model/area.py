@@ -64,7 +64,7 @@ class Area(DeviceEndpoint):
         super_equals = super().__eq__(other)
         if not super_equals:
             return False
-        return self.status == other.status and self.armed_status == other.armed_status
+        return self.status == other.status and self.armed_status == other.armed_status and self.available_arm_statuses == other.available_arm_statuses and self.available_statuses == other.available_statuses
 
     @staticmethod
     def from_api_response(response_entry: Dict) -> 'Area':

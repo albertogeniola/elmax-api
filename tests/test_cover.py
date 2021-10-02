@@ -5,9 +5,41 @@ import pytest
 
 from elmax_api.http import Elmax
 from elmax_api.model.command import Command
+from elmax_api.model.cover import Cover
 from elmax_api.model.cover_status import CoverStatus
 from elmax_api.model.panel import PanelStatus, PanelEntry
 from tests import USERNAME, PASSWORD
+import time
+
+
+async def wait_for_cover_status(client: Elmax, endpoint_id: str, status: CoverStatus, timeout: float) -> bool:
+    t = time.time()
+    deadline = t + timeout
+
+    while time.time() < deadline:
+        try:
+            cur_status = await client.get_endpoint_status(endpoint_id=endpoint_id)
+            cover: Cover = cur_status.covers[0]
+            if cover.status == status:
+                return True
+        finally:
+            await asyncio.sleep(delay=2)
+    return False
+
+
+async def wait_for_cover_position(client: Elmax, endpoint_id: str, position: int, timeout: float) -> bool:
+    t = time.time()
+    deadline = t + timeout
+
+    while time.time() < deadline:
+        try:
+            cur_status = await client.get_endpoint_status(endpoint_id=endpoint_id)
+            cover: Cover = cur_status.covers[0]
+            if cover.position == position:
+                return True
+        finally:
+            await asyncio.sleep(delay=2)
+    raise TimeoutError()
 
 
 @pytest.mark.asyncio
@@ -27,21 +59,24 @@ async def test_open_close():
         assert isinstance(panel, PanelStatus)
 
         # Store old status into a dictionary for later comparison
-        cover_status = { cover.endpoint_id: cover.status for cover in panel.covers}
         cover_position = { cover.endpoint_id: cover.position for cover in panel.covers}
 
         # Toggle all the actuators
+        tasks = []
         for endpoint_id, curr_status in cover_position.items():
             command = Command.UP if curr_status==0 else Command.DOWN
             await client.execute_command(endpoint_id=endpoint_id, command=command)
+            expected_position = 100 if command==Command.UP else 0
+            t = wait_for_cover_position(client=client, endpoint_id=endpoint_id, position=expected_position, timeout=20.0)
+            tasks.append(t)
 
         # Ensure all the actuators switched correctly
-        await asyncio.sleep(15)
-        panel = await client.get_panel_status(control_panel_id=entry.hash)  # type: PanelStatus
+        done, pending = await asyncio.wait(tasks, return_when="FIRST_EXCEPTION")
+        for t in done:
+            if t.exception():
+                pytest.fail("One of the covers failed")
+                t.cancel()
 
-        for cover in panel.covers:
-            expected_position = 100 if cover_position[cover.endpoint_id] == 0 else 0
-            assert cover.position==expected_position
 
 @pytest.mark.asyncio
 async def test_up_down_states():
@@ -63,9 +98,17 @@ async def test_up_down_states():
         cover_position = {cover.endpoint_id: cover.position for cover in panel.covers}
 
         # Toggle all the actuators
+        tasks = []
         for endpoint_id, curr_status in cover_position.items():
             command = Command.UP if curr_status==0 else Command.DOWN
             await client.execute_command(endpoint_id=endpoint_id, command=command)
-            cover_status = {cover.endpoint_id: cover.status for cover in panel.covers}
-            panel = await client.get_panel_status(control_panel_id=entry.hash)  # type: PanelStatus
-            assert cover_status[endpoint_id] == CoverStatus.DOWN if command == Command.DOWN else CoverStatus.UP
+            expected_status = CoverStatus.UP if command == Command.UP else CoverStatus.DOWN
+            t = wait_for_cover_status(client=client, endpoint_id=endpoint_id, status=expected_status,timeout=4.0)
+            tasks.append(t)
+
+        # Ensure all the actuators switched correctly
+        done, pending = await asyncio.wait(tasks, return_when="FIRST_EXCEPTION")
+        for t in done:
+            if t.exception():
+                pytest.fail("One of the covers failed")
+                t.cancel()
