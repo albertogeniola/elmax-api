@@ -4,7 +4,7 @@ import asyncio
 import pytest
 
 from elmax_api.http import Elmax
-from elmax_api.model.command import Command
+from elmax_api.model.command import CoverCommand
 from elmax_api.model.cover import Cover
 from elmax_api.model.cover_status import CoverStatus
 from elmax_api.model.panel import PanelStatus, PanelEntry
@@ -64,9 +64,9 @@ async def test_open_close():
         # Toggle all the actuators
         tasks = []
         for endpoint_id, curr_status in cover_position.items():
-            command = Command.UP if curr_status==0 else Command.DOWN
+            command = CoverCommand.UP if curr_status==0 else CoverCommand.DOWN
             await client.execute_command(endpoint_id=endpoint_id, command=command)
-            expected_position = 100 if command==Command.UP else 0
+            expected_position = 100 if command==CoverCommand.UP else 0
             t = wait_for_cover_position(client=client, endpoint_id=endpoint_id, position=expected_position, timeout=20.0)
             tasks.append(t)
 
@@ -100,9 +100,9 @@ async def test_up_down_states():
         # Toggle all the actuators
         tasks = []
         for endpoint_id, curr_status in cover_position.items():
-            command = Command.UP if curr_status==0 else Command.DOWN
+            command = CoverCommand.UP if curr_status==0 else CoverCommand.DOWN
             await client.execute_command(endpoint_id=endpoint_id, command=command)
-            expected_status = CoverStatus.UP if command == Command.UP else CoverStatus.DOWN
+            expected_status = CoverStatus.UP if command == CoverCommand.UP else CoverStatus.DOWN
             t = wait_for_cover_status(client=client, endpoint_id=endpoint_id, status=expected_status,timeout=4.0)
             tasks.append(t)
 

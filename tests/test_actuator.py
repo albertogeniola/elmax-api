@@ -4,7 +4,7 @@ import asyncio
 import pytest
 
 from elmax_api.http import Elmax
-from elmax_api.model.command import Command
+from elmax_api.model.command import SwitchCommand
 from elmax_api.model.panel import PanelStatus, PanelEntry
 from tests import USERNAME, PASSWORD
 
@@ -28,7 +28,7 @@ async def test_device_command():
 
     # Toggle all the actuators
     for endpoint_id, curr_status in actuator_status.items():
-        command = Command.TURN_OFF if curr_status else Command.TURN_ON
+        command = SwitchCommand.TURN_OFF if curr_status else SwitchCommand.TURN_ON
         await client.execute_command(endpoint_id=endpoint_id, command=command)
 
     # Ensure all the actuators switched correctly
@@ -41,5 +41,5 @@ async def test_device_command():
 
     # Restore original status
     for endpoint_id, curr_status in actuator_status.items():
-        command = Command.TURN_ON if curr_status else Command.TURN_OFF
+        command = SwitchCommand.TURN_ON if curr_status else SwitchCommand.TURN_OFF
         await client.execute_command(endpoint_id=endpoint_id, command=command)
