@@ -297,7 +297,7 @@ class Elmax(object):
         return status
 
     @async_auth
-    async def execute_command(self, endpoint_id: str, command: Union[Command, str], extra_payload: Dict = None) -> None:
+    async def execute_command(self, endpoint_id: str, command: Union[Command, str], extra_payload: Dict = None) -> Optional[Dict]:
         """
         Executes a command against the given endpoint
         Args:
@@ -305,10 +305,10 @@ class Elmax(object):
             command: Command to issue. Can either be a string or a `Command` enum value
             extra_payload: Dictionary of extra payload to be issued to the endpoint
 
-        Returns: None
+        Returns: Json response data, if any, returned from the API
         """
         if isinstance(command, Command):
-            cmd_str = command.value
+            cmd_str = str(command.value)
         elif isinstance(command, str):
             cmd_str = command
         else:
@@ -319,6 +319,8 @@ class Elmax(object):
 
         url = URL(BASE_URL) / ENDPOINT_ENTITY_ID_COMMAND / endpoint_id / cmd_str
         response_data = await self._request(Elmax.HttpMethod.POST, url=url, authorized=True, data=extra_payload)
+        _LOGGER.debug(response_data)
+        return response_data
 
     def get_authenticated_username(self) -> Optional[str]:
         """
