@@ -3,6 +3,7 @@ import asyncio
 
 import pytest
 
+from elmax_api.exceptions import ElmaxBadPinError
 from elmax_api.http import Elmax
 from elmax_api.model.alarm_status import AlarmStatus, AlarmArmStatus
 from elmax_api.model.area import Area
@@ -31,12 +32,13 @@ async def get_area():
     panel = await client.get_panel_status(control_panel_id=entry.hash)
     assert isinstance(panel, PanelStatus)
     assert len(panel.areas) > 0
-    # Get first area
-    return panel.areas[0]
+    # Do not work with un-armable areas
+    a = filter(lambda x: x.status != AlarmStatus.NOT_ARMED_NOT_ARMABLE, panel.areas)
+    return list(a)[0]
 
 
-async def reset_area_status(area: Area, command: AreaCommand, expected_arm_status: AlarmArmStatus) -> Area:
-    res = await client.execute_command(endpoint_id=area.endpoint_id, command=command, extra_payload={"code":"000000"})
+async def reset_area_status(area: Area, command: AreaCommand, expected_arm_status: AlarmArmStatus, code: str = "000000") -> Area:
+    res = await client.execute_command(endpoint_id=area.endpoint_id, command=command, extra_payload={"code": code})
     await asyncio.sleep(delay=2.0)
 
     # Make sure the area is now consistent
@@ -45,6 +47,26 @@ async def reset_area_status(area: Area, command: AreaCommand, expected_arm_statu
     assert area.armed_status == expected_arm_status
     return area
 
+
+@pytest.mark.asyncio
+async def test_area_wrong_disarm_code():
+    # Make sure the area is disarmed
+    area = await get_area()
+    if area.armed_status != AlarmArmStatus.NOT_ARMED:
+        await reset_area_status(area=area, command=AreaCommand.DISARM, expected_arm_status=AlarmArmStatus.NOT_ARMED)
+
+    # ARM TOTALLY
+    area = await get_area()
+    area = await reset_area_status(area=area, command=AreaCommand.ARM_TOTALLY, expected_arm_status=AlarmArmStatus.ARMED_TOTALLY, code="000000")
+
+    # Check status
+    assert area.status == AlarmStatus.ARMED_STANDBY
+
+    # Disarm with wrong code
+    with pytest.raises(ElmaxBadPinError):
+        area = await reset_area_status(area=area, command=AreaCommand.ARM_TOTALLY, expected_arm_status=AlarmArmStatus.ARMED_TOTALLY, code="999999")
+
+    assert area.status == AlarmStatus.ARMED_STANDBY
 
 @pytest.mark.asyncio
 async def test_area_arming_totally():
