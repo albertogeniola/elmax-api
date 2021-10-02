@@ -116,7 +116,7 @@ class Elmax(object):
         try:
             async with httpx.AsyncClient(timeout=DEFAULT_HTTP_TIMEOUT) as client:
                 if method == Elmax.HttpMethod.GET:
-                    response = await client.get(str(url), headers=headers)
+                    response = await client.get(str(url), headers=headers, params=data)
                 elif method == Elmax.HttpMethod.POST:
                     response = await client.post(str(url), headers=headers, json=data)
                 else:
@@ -297,12 +297,13 @@ class Elmax(object):
         return status
 
     @async_auth
-    async def execute_command(self, endpoint_id: str, command: Union[Command, str]) -> None:
+    async def execute_command(self, endpoint_id: str, command: Union[Command, str], extra_payload: Dict = None) -> None:
         """
         Executes a command against the given endpoint
         Args:
             endpoint_id: EndpointID against which the command should be issued
             command: Command to issue. Can either be a string or a `Command` enum value
+            extra_payload: Dictionary of extra payload to be issued to the endpoint
 
         Returns: None
         """
@@ -313,8 +314,11 @@ class Elmax(object):
         else:
             raise ValueError("Invalid/unsupported command")
 
+        if extra_payload is not None and not isinstance(extra_payload, dict):
+            raise ValueError("The extra_payload parameter must be a dictionary")
+
         url = URL(BASE_URL) / ENDPOINT_ENTITY_ID_COMMAND / endpoint_id / cmd_str
-        response_data = await self._request(Elmax.HttpMethod.POST, url=url, authorized=True)
+        response_data = await self._request(Elmax.HttpMethod.POST, url=url, authorized=True, data=extra_payload)
 
     def get_authenticated_username(self) -> Optional[str]:
         """
