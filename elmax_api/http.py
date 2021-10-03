@@ -114,7 +114,7 @@ class Elmax(object):
             headers["Authorization"] = f"JWT {self._raw_jwt}"
 
         try:
-            async with httpx.AsyncClient(timeout=DEFAULT_HTTP_TIMEOUT) as client:
+            async with httpx.AsyncClient(timeout=timeout) as client:
                 if method == Elmax.HttpMethod.GET:
                     response = await client.get(str(url), headers=headers, params=data)
                 elif method == Elmax.HttpMethod.POST:
@@ -149,7 +149,7 @@ class Elmax(object):
                 return response.json()
 
         # Wrap any other HTTP/NETWORK error
-        except httpx.ConnectError:
+        except (httpx.ConnectError, httpx.ReadTimeout):
             _LOGGER.exception("An unhandled error occurred while executing API Call.")
             raise ElmaxNetworkError("A network error occurred")
 
