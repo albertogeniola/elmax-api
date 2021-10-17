@@ -37,7 +37,7 @@ async def test_device_command():
 
     for actuator in panel.actuators:
         expected_status = not actuator_status[actuator.endpoint_id]
-        assert actuator.opened==expected_status
+        assert actuator.opened == expected_status
 
     # Restore original status
     for endpoint_id, curr_status in actuator_status.items():

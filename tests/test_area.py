@@ -3,7 +3,7 @@ import asyncio
 
 import pytest
 
-from elmax_api.exceptions import ElmaxBadPinError
+from elmax_api.exceptions import ElmaxBadPinError, ElmaxPanelBusyError, ElmaxApiError
 from elmax_api.http import Elmax
 from elmax_api.model.alarm_status import AlarmStatus, AlarmArmStatus
 from elmax_api.model.area import Area
@@ -39,13 +39,19 @@ async def get_area():
 
 async def reset_area_status(area: Area, command: AreaCommand, expected_arm_status: AlarmArmStatus, code: str = "000000") -> Area:
     res = await client.execute_command(endpoint_id=area.endpoint_id, command=command, extra_payload={"code": code})
-    await asyncio.sleep(delay=2.0)
 
-    # Make sure the area is now consistent
-    status = await client.get_endpoint_status(endpoint_id=area.endpoint_id)
-    area = status.areas[0]
-    assert area.armed_status == expected_arm_status
-    return area
+    attempts = 0
+    while attempts < 3:
+        # Make sure the area is now consistent
+        status = await client.get_endpoint_status(endpoint_id=area.endpoint_id)
+        area = status.areas[0]
+
+        if area.armed_status != expected_arm_status:
+            attempts += 1
+            await asyncio.sleep(delay=2.0)
+        else:
+            return area
+    pytest.fail(f"RESET_AREA_STATUS failed to set status {expected_arm_status} on area {area}")
 
 
 @pytest.mark.asyncio
@@ -57,16 +63,23 @@ async def test_area_wrong_disarm_code():
 
     # ARM TOTALLY
     area = await get_area()
-    area = await reset_area_status(area=area, command=AreaCommand.ARM_TOTALLY, expected_arm_status=AlarmArmStatus.ARMED_TOTALLY, code="000000")
+    area = await reset_area_status(area=area, command=AreaCommand.ARM_TOTALLY, expected_arm_status=AlarmArmStatus.ARMED_TOTALLY)
 
     # Check status
     assert area.status == AlarmStatus.ARMED_STANDBY
 
     # Disarm with wrong code
-    with pytest.raises(ElmaxBadPinError):
-        area = await reset_area_status(area=area, command=AreaCommand.ARM_TOTALLY, expected_arm_status=AlarmArmStatus.ARMED_TOTALLY, code="999999")
+    error403 = False
+    try:
+        area = await reset_area_status(area=area, command=AreaCommand.DISARM, expected_arm_status=AlarmArmStatus.NOT_ARMED, code="999999")
+    except ElmaxApiError as e:
+        error403 = e.status_code == 403
+
+    if not error403:
+        pytest.fail("Expected ERROR 403, but it hasn't occurred")
 
     assert area.status == AlarmStatus.ARMED_STANDBY
+
 
 @pytest.mark.asyncio
 async def test_area_arming_totally():
@@ -85,7 +98,7 @@ async def test_area_arming_totally():
 
 @pytest.mark.asyncio
 async def test_area_disarm():
-    # Make sure the area is disarmed
+    # Make sure the area is armed first
     area = await get_area()
     if area.armed_status != AlarmArmStatus.ARMED_TOTALLY:
         await reset_area_status(area=area, command=AreaCommand.ARM_TOTALLY, expected_arm_status=AlarmArmStatus.ARMED_TOTALLY)
