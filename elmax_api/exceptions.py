@@ -33,3 +33,8 @@ class ElmaxBadLoginError(ElmaxError):
 class ElmaxBadPinError(ElmaxError):
     """Occurs when a BAD pin is used with the discovery api"""
     pass
+
+
+class ElmaxPanelBusyError(ElmaxError):
+    """Occurs when a command cannot be executed due to panel busy status"""
+    pass
