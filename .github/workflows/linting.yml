@@ -3,12 +3,12 @@ name: Lint
 on:
   push:
     branches:
-      - *
+      - '*'
     paths:
       - '!docs/**'
   pull_request:
     branches:
-      - *
+      - '*'
     paths:
       - '!docs/**'
 jobs:
