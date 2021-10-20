@@ -27,6 +27,10 @@ jobs:
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --statistics
       - name: Test with pytest
+        env:
+          ELMAX_USERNAME: ${{ secrets.ELMAX_USERNAME }}
+          ELMAX_PASSWORD: ${{ secrets.ELMAX_PASSWORD }}
+          ELMAX_PANEL_PIN: ${{ secrets.ELMAX_PANEL_PIN }}
         run: |
           pytest
     
