@@ -10,13 +10,21 @@ import jwt
 from yarl import URL
 
 from elmax_api.constants import BASE_URL, ENDPOINT_LOGIN, USER_AGENT, ENDPOINT_DEVICES, ENDPOINT_DISCOVERY, \
-    ENDPOINT_STATUS_ENTITY_ID, ENDPOINT_ENTITY_ID_COMMAND, DEFAULT_HTTP_TIMEOUT
-from elmax_api.exceptions import ElmaxBadLoginError, ElmaxApiError, ElmaxNetworkError, ElmaxBadPinError
+    ENDPOINT_STATUS_ENTITY_ID, ENDPOINT_ENTITY_ID_COMMAND, DEFAULT_HTTP_TIMEOUT, BUSY_WAIT_INTERVAL
+from elmax_api.exceptions import ElmaxBadLoginError, ElmaxApiError, ElmaxNetworkError, ElmaxBadPinError, \
+    ElmaxPanelBusyError
 from elmax_api.model.command import Command
 from elmax_api.model.panel import PanelEntry, PanelStatus, EndpointStatus
 
 _LOGGER = logging.getLogger(__name__)
 _JWT_ALGS = ["HS256"]
+
+
+async def helper(f, *args, **kwargs):
+    if asyncio.iscoroutinefunction(f):
+        return await f(*args, **kwargs)
+    else:
+        return f(*args, **kwargs)
 
 
 def async_auth(func, *method_args, **method_kwargs):
@@ -25,13 +33,6 @@ def async_auth(func, *method_args, **method_kwargs):
     It takes care to verify the validity of a JWT token before issuing the method call.
     In case the JWT is expired, or close to expiration date, it tries to renew it.
     """
-
-    async def helper(f, *args, **kwargs):
-        if asyncio.iscoroutinefunction(f):
-            return await f(*args, **kwargs)
-        else:
-            return f(*args, **kwargs)
-
     @functools.wraps(func, *method_args, **method_kwargs)
     async def wrapper(*args, **kwargs):
         # Check whether the client has a valid token to be used. We consider valid tokens with expiration time
@@ -272,7 +273,7 @@ class Elmax(object):
         try:
             response_data = await self._request(Elmax.HttpMethod.GET, url=url, authorized=True)
         except ElmaxApiError as e:
-            if e.status_code == 401:
+            if e.status_code == 403:
                 raise ElmaxBadPinError() from e
             else:
                 raise
@@ -297,13 +298,18 @@ class Elmax(object):
         return status
 
     @async_auth
-    async def execute_command(self, endpoint_id: str, command: Union[Command, str], extra_payload: Dict = None) -> Optional[Dict]:
+    async def execute_command(self,
+                              endpoint_id: str,
+                              command: Union[Command, str],
+                              extra_payload: Dict = None,
+                              retry_attempts: int = 3) -> Optional[Dict]:
         """
         Executes a command against the given endpoint
         Args:
             endpoint_id: EndpointID against which the command should be issued
             command: Command to issue. Can either be a string or a `Command` enum value
             extra_payload: Dictionary of extra payload to be issued to the endpoint
+            retry_attempts: Maximum retry attempts in case of 422 error (panel busy)
 
         Returns: Json response data, if any, returned from the API
         """
@@ -318,9 +324,20 @@ class Elmax(object):
             raise ValueError("The extra_payload parameter must be a dictionary")
 
         url = URL(BASE_URL) / ENDPOINT_ENTITY_ID_COMMAND / endpoint_id / cmd_str
-        response_data = await self._request(Elmax.HttpMethod.POST, url=url, authorized=True, data=extra_payload)
-        _LOGGER.debug(response_data)
-        return response_data
+        retry_attempt = 0
+        while retry_attempt < retry_attempts:
+            try:
+                response_data = await self._request(Elmax.HttpMethod.POST, url=url, authorized=True, data=extra_payload)
+                _LOGGER.debug(response_data)
+                return response_data
+            except ElmaxApiError as e:
+                if e.status_code == 422:
+                    retry_attempt += 1
+                    _LOGGER.error("Panel is busy. Command will be retried in a moment.")
+                    await asyncio.sleep(BUSY_WAIT_INTERVAL)
+                else:
+                    raise
+        raise ElmaxPanelBusyError()
 
     def get_authenticated_username(self) -> Optional[str]:
         """

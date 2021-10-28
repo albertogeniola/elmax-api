@@ -16,6 +16,7 @@ USER_AGENT = f"elmax-api/{__version__}"
 
 # DEFAULT HTTP TIMEOUT
 DEFAULT_HTTP_TIMEOUT = 10.0
+BUSY_WAIT_INTERVAL = 2.0
 
 
 

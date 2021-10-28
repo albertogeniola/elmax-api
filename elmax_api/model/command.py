@@ -4,13 +4,16 @@ from enum import Enum
 class Command(Enum):
     pass
 
+
 class SwitchCommand(Command):
     TURN_ON = "on"
     TURN_OFF = "off"
 
+
 class CoverCommand(Command):
     UP = "up"
     DOWN = "down"
+
 
 class AreaCommand(Command):
     ARM_TOTALLY = 4
@@ -18,3 +21,8 @@ class AreaCommand(Command):
     ARM_P2 = 2
     ARM_P1 = 1
     DISARM = 0
+
+
+class SceneCommand(Command):
+    TRIGGER_SCENE = "on"
+
