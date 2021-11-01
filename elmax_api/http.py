@@ -1,3 +1,7 @@
+"""
+This module handles HTTP api calls to the Elmax WEB endpoint, implemented by the `Elmax` class
+"""
+
 import asyncio
 import functools
 import logging
