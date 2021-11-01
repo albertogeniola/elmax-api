@@ -1,6 +1,6 @@
 # Python Elmax API client
 
-![Alt text](docs/_static/elmax-logo.png?raw=true "Elmax Logo")
+![Elmax Logo](docs/_static/elmax-logo.png?raw=true "Elmax Logo")
 
 Asynchronous Python API client for interacting with the Elmax Cloud services, via HTTP apis.
 
