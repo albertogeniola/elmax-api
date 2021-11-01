@@ -4,9 +4,9 @@
 
 Asynchronous Python API client for interacting with the Elmax Cloud services, via HTTP apis.
 
-![Release Build Status](https://github.com/albertogeniola/MerossIot/workflows/Release/badge.svg?branch=main)
-![Testing Status](https://github.com/albertogeniola/MerossIot/workflows/Testing/badge.svg?branch=main)
-![Documentation](https://github.com/albertogeniola/MerossIot/workflows/Publish%20Documentation/badge.svg?branch=main)
+![Release Build Status](https://github.com/albertogeniola/elmax-api/workflows/Release/badge.svg?branch=main)
+![Testing Status](https://github.com/albertogeniola/elmax-api/workflows/Testing/badge.svg?branch=main)
+![Documentation](https://github.com/albertogeniola/elmax-api/workflows/Publish%20Documentation/badge.svg?branch=main)
 
 ## Installation
 
