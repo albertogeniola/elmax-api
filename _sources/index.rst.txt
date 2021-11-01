@@ -7,8 +7,8 @@ Welcome to Elmax API's documentation!
    :maxdepth: 2
    :caption: Api reference
 
-   basic
    examples/quickstart
+   basic
    api/modules
 
 .. note::
