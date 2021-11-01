@@ -4,6 +4,10 @@
 
 Asynchronous Python API client for interacting with the Elmax Cloud services, via HTTP apis.
 
+![Release Build Status](https://github.com/albertogeniola/MerossIot/workflows/Release/badge.svg?branch=main)
+![Testing Status](https://github.com/albertogeniola/MerossIot/workflows/Testing/badge.svg?branch=main)
+![Documentation](https://github.com/albertogeniola/MerossIot/workflows/Publish%20Documentation/badge.svg?branch=main)
+
 ## Installation
 
 Use the package manager pip to install Python Elmax API client:
@@ -76,3 +80,6 @@ async def main():
 if __name__ == '__main__':
     asyncio.run(main())
 ```
+
+## Documentation
+Full API documentation is available on GitHub pages, [here](https://albertogeniola.github.io/elmax-api/).
