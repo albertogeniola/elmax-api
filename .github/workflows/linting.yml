@@ -1,0 +1,26 @@
+name: Lint
+
+on:
+  push:
+    branches:
+      - '*'
+    paths:
+      - '!docs/**'
+  pull_request:
+    branches:
+      - '*'
+    paths:
+      - '!docs/**'
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.9"
+    - name: Black Code Formatter
+      uses: psf/black@stable
