@@ -1,0 +1,778 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>elmax_api.model package &mdash; Elmax API  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="elmax_api package" href="elmax_api.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Elmax API
+          
+
+          
+            
+            <img src="../_static/elmax-logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Api reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../basic.html">Basic Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/quickstart.html">Quick Start</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">elmax_api</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="elmax_api.html">elmax_api package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="elmax_api.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">elmax_api.model package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="elmax_api.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="elmax_api.html#module-elmax_api.constants">elmax_api.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="elmax_api.html#module-elmax_api.exceptions">elmax_api.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="elmax_api.html#elmax-api-http-module">elmax_api.http module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="elmax_api.html#module-elmax_api">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Elmax API</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">elmax_api</a> &raquo;</li>
+        
+          <li><a href="elmax_api.html">elmax_api package</a> &raquo;</li>
+        
+      <li>elmax_api.model package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/api/elmax_api.model.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="elmax-api-model-package">
+<h1>elmax_api.model package<a class="headerlink" href="#elmax-api-model-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-elmax_api.model.actuator">
+<span id="elmax-api-model-actuator-module"></span><h2>elmax_api.model.actuator module<a class="headerlink" href="#module-elmax_api.model.actuator" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="elmax_api.model.actuator.Actuator">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">elmax_api.model.actuator.</span></span><span class="sig-name descname"><span class="pre">Actuator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opened</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elmax_api.model.actuator.Actuator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#elmax_api.model.endpoint.DeviceEndpoint" title="elmax_api.model.endpoint.DeviceEndpoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">elmax_api.model.endpoint.DeviceEndpoint</span></code></a></p>
+<p>Representation of an actuator</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="elmax_api.model.actuator.Actuator.from_api_response">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_api_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response_entry</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#elmax_api.model.actuator.Actuator" title="elmax_api.model.actuator.Actuator"><span class="pre">elmax_api.model.actuator.Actuator</span></a></span></span><a class="headerlink" href="#elmax_api.model.actuator.Actuator.from_api_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new actuator object from the API json response</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.actuator.Actuator.opened">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">opened</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#elmax_api.model.actuator.Actuator.opened" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-elmax_api.model.alarm_status">
+<span id="elmax-api-model-alarm-status-module"></span><h2>elmax_api.model.alarm_status module<a class="headerlink" href="#module-elmax_api.model.alarm_status" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="elmax_api.model.alarm_status.AlarmArmStatus">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">elmax_api.model.alarm_status.</span></span><span class="sig-name descname"><span class="pre">AlarmArmStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elmax_api.model.alarm_status.AlarmArmStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.alarm_status.AlarmArmStatus.ARMED_P1">
+<span class="sig-name descname"><span class="pre">ARMED_P1</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#elmax_api.model.alarm_status.AlarmArmStatus.ARMED_P1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.alarm_status.AlarmArmStatus.ARMED_P1_P2">
+<span class="sig-name descname"><span class="pre">ARMED_P1_P2</span></span><em class="property"> <span class="pre">=</span> <span class="pre">3</span></em><a class="headerlink" href="#elmax_api.model.alarm_status.AlarmArmStatus.ARMED_P1_P2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.alarm_status.AlarmArmStatus.ARMED_P2">
+<span class="sig-name descname"><span class="pre">ARMED_P2</span></span><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#elmax_api.model.alarm_status.AlarmArmStatus.ARMED_P2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.alarm_status.AlarmArmStatus.ARMED_TOTALLY">
+<span class="sig-name descname"><span class="pre">ARMED_TOTALLY</span></span><em class="property"> <span class="pre">=</span> <span class="pre">4</span></em><a class="headerlink" href="#elmax_api.model.alarm_status.AlarmArmStatus.ARMED_TOTALLY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.alarm_status.AlarmArmStatus.NOT_ARMED">
+<span class="sig-name descname"><span class="pre">NOT_ARMED</span></span><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#elmax_api.model.alarm_status.AlarmArmStatus.NOT_ARMED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="elmax_api.model.alarm_status.AlarmStatus">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">elmax_api.model.alarm_status.</span></span><span class="sig-name descname"><span class="pre">AlarmStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elmax_api.model.alarm_status.AlarmStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.alarm_status.AlarmStatus.ARMED_STANDBY">
+<span class="sig-name descname"><span class="pre">ARMED_STANDBY</span></span><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#elmax_api.model.alarm_status.AlarmStatus.ARMED_STANDBY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.alarm_status.AlarmStatus.NOT_ARMED_NOT_ARMABLE">
+<span class="sig-name descname"><span class="pre">NOT_ARMED_NOT_ARMABLE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#elmax_api.model.alarm_status.AlarmStatus.NOT_ARMED_NOT_ARMABLE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.alarm_status.AlarmStatus.NOT_ARMED_NOT_TRIGGERED">
+<span class="sig-name descname"><span class="pre">NOT_ARMED_NOT_TRIGGERED</span></span><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#elmax_api.model.alarm_status.AlarmStatus.NOT_ARMED_NOT_TRIGGERED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.alarm_status.AlarmStatus.TRIGGERED">
+<span class="sig-name descname"><span class="pre">TRIGGERED</span></span><em class="property"> <span class="pre">=</span> <span class="pre">3</span></em><a class="headerlink" href="#elmax_api.model.alarm_status.AlarmStatus.TRIGGERED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-elmax_api.model.area">
+<span id="elmax-api-model-area-module"></span><h2>elmax_api.model.area module<a class="headerlink" href="#module-elmax_api.model.area" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="elmax_api.model.area.Area">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">elmax_api.model.area.</span></span><span class="sig-name descname"><span class="pre">Area</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#elmax_api.model.alarm_status.AlarmStatus" title="elmax_api.model.alarm_status.AlarmStatus"><span class="pre">elmax_api.model.alarm_status.AlarmStatus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">armed_status</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#elmax_api.model.alarm_status.AlarmArmStatus" title="elmax_api.model.alarm_status.AlarmArmStatus"><span class="pre">elmax_api.model.alarm_status.AlarmArmStatus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_statuses</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#elmax_api.model.alarm_status.AlarmStatus" title="elmax_api.model.alarm_status.AlarmStatus"><span class="pre">elmax_api.model.alarm_status.AlarmStatus</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_arm_statuses</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#elmax_api.model.alarm_status.AlarmArmStatus" title="elmax_api.model.alarm_status.AlarmArmStatus"><span class="pre">elmax_api.model.alarm_status.AlarmArmStatus</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elmax_api.model.area.Area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#elmax_api.model.endpoint.DeviceEndpoint" title="elmax_api.model.endpoint.DeviceEndpoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">elmax_api.model.endpoint.DeviceEndpoint</span></code></a></p>
+<p>Representation of an Area configuration</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.area.Area.armed_status">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">armed_status</span></span><em class="property"><span class="pre">:</span> <span class="pre">elmax_api.model.alarm_status.AlarmArmStatus</span></em><a class="headerlink" href="#elmax_api.model.area.Area.armed_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current alarm arm status</p>
+<p>Returns: <cite>AlarmArmStatus</cite></p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.area.Area.available_arm_statuses">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">available_arm_statuses</span></span><em class="property"><span class="pre">:</span> <span class="pre">List[elmax_api.model.alarm_status.AlarmArmStatus]</span></em><a class="headerlink" href="#elmax_api.model.area.Area.available_arm_statuses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Supported list of available alarm arm-statutes
+Returns:</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.area.Area.available_statuses">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">available_statuses</span></span><em class="property"><span class="pre">:</span> <span class="pre">List[elmax_api.model.alarm_status.AlarmStatus]</span></em><a class="headerlink" href="#elmax_api.model.area.Area.available_statuses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Supported list of available alarm statuses
+Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elmax_api.model.area.Area.from_api_response">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_api_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response_entry</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#elmax_api.model.area.Area" title="elmax_api.model.area.Area"><span class="pre">elmax_api.model.area.Area</span></a></span></span><a class="headerlink" href="#elmax_api.model.area.Area.from_api_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new area configuration object from the API json response</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.area.Area.status">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">status</span></span><em class="property"><span class="pre">:</span> <span class="pre">elmax_api.model.alarm_status.AlarmStatus</span></em><a class="headerlink" href="#elmax_api.model.area.Area.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current alarm status.</p>
+<p>Returns: <cite>AlarmStatus</cite></p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-elmax_api.model.command">
+<span id="elmax-api-model-command-module"></span><h2>elmax_api.model.command module<a class="headerlink" href="#module-elmax_api.model.command" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="elmax_api.model.command.AreaCommand">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">elmax_api.model.command.</span></span><span class="sig-name descname"><span class="pre">AreaCommand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elmax_api.model.command.AreaCommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#elmax_api.model.command.Command" title="elmax_api.model.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">elmax_api.model.command.Command</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.command.AreaCommand.ARM_P1">
+<span class="sig-name descname"><span class="pre">ARM_P1</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#elmax_api.model.command.AreaCommand.ARM_P1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.command.AreaCommand.ARM_P1_P2">
+<span class="sig-name descname"><span class="pre">ARM_P1_P2</span></span><em class="property"> <span class="pre">=</span> <span class="pre">3</span></em><a class="headerlink" href="#elmax_api.model.command.AreaCommand.ARM_P1_P2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.command.AreaCommand.ARM_P2">
+<span class="sig-name descname"><span class="pre">ARM_P2</span></span><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#elmax_api.model.command.AreaCommand.ARM_P2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.command.AreaCommand.ARM_TOTALLY">
+<span class="sig-name descname"><span class="pre">ARM_TOTALLY</span></span><em class="property"> <span class="pre">=</span> <span class="pre">4</span></em><a class="headerlink" href="#elmax_api.model.command.AreaCommand.ARM_TOTALLY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.command.AreaCommand.DISARM">
+<span class="sig-name descname"><span class="pre">DISARM</span></span><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#elmax_api.model.command.AreaCommand.DISARM" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="elmax_api.model.command.Command">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">elmax_api.model.command.</span></span><span class="sig-name descname"><span class="pre">Command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elmax_api.model.command.Command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="elmax_api.model.command.CoverCommand">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">elmax_api.model.command.</span></span><span class="sig-name descname"><span class="pre">CoverCommand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elmax_api.model.command.CoverCommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#elmax_api.model.command.Command" title="elmax_api.model.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">elmax_api.model.command.Command</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.command.CoverCommand.DOWN">
+<span class="sig-name descname"><span class="pre">DOWN</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'down'</span></em><a class="headerlink" href="#elmax_api.model.command.CoverCommand.DOWN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.command.CoverCommand.UP">
+<span class="sig-name descname"><span class="pre">UP</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'up'</span></em><a class="headerlink" href="#elmax_api.model.command.CoverCommand.UP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="elmax_api.model.command.SceneCommand">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">elmax_api.model.command.</span></span><span class="sig-name descname"><span class="pre">SceneCommand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elmax_api.model.command.SceneCommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#elmax_api.model.command.Command" title="elmax_api.model.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">elmax_api.model.command.Command</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.command.SceneCommand.TRIGGER_SCENE">
+<span class="sig-name descname"><span class="pre">TRIGGER_SCENE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'on'</span></em><a class="headerlink" href="#elmax_api.model.command.SceneCommand.TRIGGER_SCENE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="elmax_api.model.command.SwitchCommand">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">elmax_api.model.command.</span></span><span class="sig-name descname"><span class="pre">SwitchCommand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elmax_api.model.command.SwitchCommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#elmax_api.model.command.Command" title="elmax_api.model.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">elmax_api.model.command.Command</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.command.SwitchCommand.TURN_OFF">
+<span class="sig-name descname"><span class="pre">TURN_OFF</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'off'</span></em><a class="headerlink" href="#elmax_api.model.command.SwitchCommand.TURN_OFF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.command.SwitchCommand.TURN_ON">
+<span class="sig-name descname"><span class="pre">TURN_ON</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'on'</span></em><a class="headerlink" href="#elmax_api.model.command.SwitchCommand.TURN_ON" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-elmax_api.model.cover">
+<span id="elmax-api-model-cover-module"></span><h2>elmax_api.model.cover module<a class="headerlink" href="#module-elmax_api.model.cover" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="elmax_api.model.cover.Cover">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">elmax_api.model.cover.</span></span><span class="sig-name descname"><span class="pre">Cover</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#elmax_api.model.cover_status.CoverStatus" title="elmax_api.model.cover_status.CoverStatus"><span class="pre">elmax_api.model.cover_status.CoverStatus</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elmax_api.model.cover.Cover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#elmax_api.model.endpoint.DeviceEndpoint" title="elmax_api.model.endpoint.DeviceEndpoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">elmax_api.model.endpoint.DeviceEndpoint</span></code></a></p>
+<p>Representation of a cover</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="elmax_api.model.cover.Cover.from_api_response">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_api_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response_entry</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#elmax_api.model.cover.Cover" title="elmax_api.model.cover.Cover"><span class="pre">elmax_api.model.cover.Cover</span></a></span></span><a class="headerlink" href="#elmax_api.model.cover.Cover.from_api_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new cover object from the API json response</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.cover.Cover.position">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">position</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#elmax_api.model.cover.Cover.position" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.cover.Cover.status">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">status</span></span><em class="property"><span class="pre">:</span> <span class="pre">elmax_api.model.cover_status.CoverStatus</span></em><a class="headerlink" href="#elmax_api.model.cover.Cover.status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-elmax_api.model.cover_status">
+<span id="elmax-api-model-cover-status-module"></span><h2>elmax_api.model.cover_status module<a class="headerlink" href="#module-elmax_api.model.cover_status" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="elmax_api.model.cover_status.CoverStatus">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">elmax_api.model.cover_status.</span></span><span class="sig-name descname"><span class="pre">CoverStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elmax_api.model.cover_status.CoverStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.cover_status.CoverStatus.DOWN">
+<span class="sig-name descname"><span class="pre">DOWN</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'down'</span></em><a class="headerlink" href="#elmax_api.model.cover_status.CoverStatus.DOWN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.cover_status.CoverStatus.IDLE">
+<span class="sig-name descname"><span class="pre">IDLE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'stop'</span></em><a class="headerlink" href="#elmax_api.model.cover_status.CoverStatus.IDLE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elmax_api.model.cover_status.CoverStatus.UP">
+<span class="sig-name descname"><span class="pre">UP</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'up'</span></em><a class="headerlink" href="#elmax_api.model.cover_status.CoverStatus.UP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-elmax_api.model.endpoint">
+<span id="elmax-api-model-endpoint-module"></span><h2>elmax_api.model.endpoint module<a class="headerlink" href="#module-elmax_api.model.endpoint" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="elmax_api.model.endpoint.DeviceEndpoint">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">elmax_api.model.endpoint.</span></span><span class="sig-name descname"><span class="pre">DeviceEndpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elmax_api.model.endpoint.DeviceEndpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.endpoint.DeviceEndpoint.endpoint_id">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">endpoint_id</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#elmax_api.model.endpoint.DeviceEndpoint.endpoint_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elmax_api.model.endpoint.DeviceEndpoint.from_api_response">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_api_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response_entry</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#elmax_api.model.endpoint.DeviceEndpoint" title="elmax_api.model.endpoint.DeviceEndpoint"><span class="pre">elmax_api.model.endpoint.DeviceEndpoint</span></a></span></span><a class="headerlink" href="#elmax_api.model.endpoint.DeviceEndpoint.from_api_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new area configuration object from the API json response</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.endpoint.DeviceEndpoint.index">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">index</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#elmax_api.model.endpoint.DeviceEndpoint.index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.endpoint.DeviceEndpoint.name">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#elmax_api.model.endpoint.DeviceEndpoint.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.endpoint.DeviceEndpoint.visible">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">visible</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#elmax_api.model.endpoint.DeviceEndpoint.visible" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-elmax_api.model.goup">
+<span id="elmax-api-model-goup-module"></span><h2>elmax_api.model.goup module<a class="headerlink" href="#module-elmax_api.model.goup" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="elmax_api.model.goup.Group">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">elmax_api.model.goup.</span></span><span class="sig-name descname"><span class="pre">Group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elmax_api.model.goup.Group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#elmax_api.model.endpoint.DeviceEndpoint" title="elmax_api.model.endpoint.DeviceEndpoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">elmax_api.model.endpoint.DeviceEndpoint</span></code></a></p>
+<p>Representation of a Group configuration</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="elmax_api.model.goup.Group.from_api_response">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_api_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response_entry</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#elmax_api.model.goup.Group" title="elmax_api.model.goup.Group"><span class="pre">elmax_api.model.goup.Group</span></a></span></span><a class="headerlink" href="#elmax_api.model.goup.Group.from_api_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new group configuration object from the API json response</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-elmax_api.model.panel">
+<span id="elmax-api-model-panel-module"></span><h2>elmax_api.model.panel module<a class="headerlink" href="#module-elmax_api.model.panel" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="elmax_api.model.panel.EndpointStatus">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">elmax_api.model.panel.</span></span><span class="sig-name descname"><span class="pre">EndpointStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">release</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cover_feature</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scene_feature</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zones</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#elmax_api.model.zone.Zone" title="elmax_api.model.zone.Zone"><span class="pre">elmax_api.model.zone.Zone</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actuators</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#elmax_api.model.actuator.Actuator" title="elmax_api.model.actuator.Actuator"><span class="pre">elmax_api.model.actuator.Actuator</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">areas</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#elmax_api.model.area.Area" title="elmax_api.model.area.Area"><span class="pre">elmax_api.model.area.Area</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#elmax_api.model.goup.Group" title="elmax_api.model.goup.Group"><span class="pre">elmax_api.model.goup.Group</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scenes</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#elmax_api.model.scene.Scene" title="elmax_api.model.scene.Scene"><span class="pre">elmax_api.model.scene.Scene</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">covers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#elmax_api.model.cover.Cover" title="elmax_api.model.cover.Cover"><span class="pre">elmax_api.model.cover.Cover</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elmax_api.model.panel.EndpointStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Representation of an endpoint status</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.EndpointStatus.actuators">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">actuators</span></span><em class="property"><span class="pre">:</span> <span class="pre">List[elmax_api.model.actuator.Actuator]</span></em><a class="headerlink" href="#elmax_api.model.panel.EndpointStatus.actuators" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.EndpointStatus.all_endpoints">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">all_endpoints</span></span><em class="property"><span class="pre">:</span> <span class="pre">List[elmax_api.model.endpoint.DeviceEndpoint]</span></em><a class="headerlink" href="#elmax_api.model.panel.EndpointStatus.all_endpoints" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.EndpointStatus.areas">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">areas</span></span><em class="property"><span class="pre">:</span> <span class="pre">List[elmax_api.model.area.Area]</span></em><a class="headerlink" href="#elmax_api.model.panel.EndpointStatus.areas" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.EndpointStatus.cover_feature">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cover_feature</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#elmax_api.model.panel.EndpointStatus.cover_feature" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.EndpointStatus.covers">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">covers</span></span><em class="property"><span class="pre">:</span> <span class="pre">List[elmax_api.model.cover.Cover]</span></em><a class="headerlink" href="#elmax_api.model.panel.EndpointStatus.covers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elmax_api.model.panel.EndpointStatus.from_api_response">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_api_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response_entry</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#elmax_api.model.panel.EndpointStatus" title="elmax_api.model.panel.EndpointStatus"><span class="pre">elmax_api.model.panel.EndpointStatus</span></a></span></span><a class="headerlink" href="#elmax_api.model.panel.EndpointStatus.from_api_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new endpoint status object from the API json response</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.EndpointStatus.groups">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">groups</span></span><em class="property"><span class="pre">:</span> <span class="pre">List[elmax_api.model.goup.Group]</span></em><a class="headerlink" href="#elmax_api.model.panel.EndpointStatus.groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.EndpointStatus.release">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">release</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#elmax_api.model.panel.EndpointStatus.release" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.EndpointStatus.scene_feature">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">scene_feature</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#elmax_api.model.panel.EndpointStatus.scene_feature" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.EndpointStatus.scenes">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">scenes</span></span><em class="property"><span class="pre">:</span> <span class="pre">List[elmax_api.model.scene.Scene]</span></em><a class="headerlink" href="#elmax_api.model.panel.EndpointStatus.scenes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.EndpointStatus.zones">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">zones</span></span><em class="property"><span class="pre">:</span> <span class="pre">List[elmax_api.model.zone.Zone]</span></em><a class="headerlink" href="#elmax_api.model.panel.EndpointStatus.zones" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="elmax_api.model.panel.PanelEntry">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">elmax_api.model.panel.</span></span><span class="sig-name descname"><span class="pre">PanelEntry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">devicehash</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">online</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_by_user</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elmax_api.model.panel.PanelEntry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Representation of an available control panel.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="elmax_api.model.panel.PanelEntry.from_api_response">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_api_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response_entry</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#elmax_api.model.panel.PanelEntry" title="elmax_api.model.panel.PanelEntry"><span class="pre">elmax_api.model.panel.PanelEntry</span></a></span></span><a class="headerlink" href="#elmax_api.model.panel.PanelEntry.from_api_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new control panel from the API json response</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elmax_api.model.panel.PanelEntry.get_name_by_user">
+<span class="sig-name descname"><span class="pre">get_name_by_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#elmax_api.model.panel.PanelEntry.get_name_by_user" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.PanelEntry.hash">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">hash</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#elmax_api.model.panel.PanelEntry.hash" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.PanelEntry.online">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">online</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#elmax_api.model.panel.PanelEntry.online" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="elmax_api.model.panel.PanelStatus">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">elmax_api.model.panel.</span></span><span class="sig-name descname"><span class="pre">PanelStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">panel_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_email</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">release</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cover_feature</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scene_feature</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zones</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#elmax_api.model.zone.Zone" title="elmax_api.model.zone.Zone"><span class="pre">elmax_api.model.zone.Zone</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actuators</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#elmax_api.model.actuator.Actuator" title="elmax_api.model.actuator.Actuator"><span class="pre">elmax_api.model.actuator.Actuator</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">areas</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#elmax_api.model.area.Area" title="elmax_api.model.area.Area"><span class="pre">elmax_api.model.area.Area</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#elmax_api.model.goup.Group" title="elmax_api.model.goup.Group"><span class="pre">elmax_api.model.goup.Group</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scenes</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#elmax_api.model.scene.Scene" title="elmax_api.model.scene.Scene"><span class="pre">elmax_api.model.scene.Scene</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">covers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#elmax_api.model.cover.Cover" title="elmax_api.model.cover.Cover"><span class="pre">elmax_api.model.cover.Cover</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elmax_api.model.panel.PanelStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Representation of a panel status</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.PanelStatus.actuators">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">actuators</span></span><em class="property"><span class="pre">:</span> <span class="pre">List[elmax_api.model.actuator.Actuator]</span></em><a class="headerlink" href="#elmax_api.model.panel.PanelStatus.actuators" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.PanelStatus.all_endpoints">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">all_endpoints</span></span><em class="property"><span class="pre">:</span> <span class="pre">List[elmax_api.model.endpoint.DeviceEndpoint]</span></em><a class="headerlink" href="#elmax_api.model.panel.PanelStatus.all_endpoints" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.PanelStatus.areas">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">areas</span></span><em class="property"><span class="pre">:</span> <span class="pre">List[elmax_api.model.area.Area]</span></em><a class="headerlink" href="#elmax_api.model.panel.PanelStatus.areas" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.PanelStatus.cover_feature">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cover_feature</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#elmax_api.model.panel.PanelStatus.cover_feature" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.PanelStatus.covers">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">covers</span></span><em class="property"><span class="pre">:</span> <span class="pre">List[elmax_api.model.cover.Cover]</span></em><a class="headerlink" href="#elmax_api.model.panel.PanelStatus.covers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elmax_api.model.panel.PanelStatus.from_api_response">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_api_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response_entry</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#elmax_api.model.panel.PanelStatus" title="elmax_api.model.panel.PanelStatus"><span class="pre">elmax_api.model.panel.PanelStatus</span></a></span></span><a class="headerlink" href="#elmax_api.model.panel.PanelStatus.from_api_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new panel status object from the API json response</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.PanelStatus.groups">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">groups</span></span><em class="property"><span class="pre">:</span> <span class="pre">List[elmax_api.model.goup.Group]</span></em><a class="headerlink" href="#elmax_api.model.panel.PanelStatus.groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.PanelStatus.panel_id">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">panel_id</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#elmax_api.model.panel.PanelStatus.panel_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.PanelStatus.release">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">release</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#elmax_api.model.panel.PanelStatus.release" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.PanelStatus.scene_feature">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">scene_feature</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#elmax_api.model.panel.PanelStatus.scene_feature" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.PanelStatus.scenes">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">scenes</span></span><em class="property"><span class="pre">:</span> <span class="pre">List[elmax_api.model.scene.Scene]</span></em><a class="headerlink" href="#elmax_api.model.panel.PanelStatus.scenes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.PanelStatus.user_email">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">user_email</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#elmax_api.model.panel.PanelStatus.user_email" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.panel.PanelStatus.zones">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">zones</span></span><em class="property"><span class="pre">:</span> <span class="pre">List[elmax_api.model.zone.Zone]</span></em><a class="headerlink" href="#elmax_api.model.panel.PanelStatus.zones" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-elmax_api.model.scene">
+<span id="elmax-api-model-scene-module"></span><h2>elmax_api.model.scene module<a class="headerlink" href="#module-elmax_api.model.scene" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="elmax_api.model.scene.Scene">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">elmax_api.model.scene.</span></span><span class="sig-name descname"><span class="pre">Scene</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elmax_api.model.scene.Scene" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#elmax_api.model.endpoint.DeviceEndpoint" title="elmax_api.model.endpoint.DeviceEndpoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">elmax_api.model.endpoint.DeviceEndpoint</span></code></a></p>
+<p>Representation of a Scene configuration</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="elmax_api.model.scene.Scene.from_api_response">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_api_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response_entry</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#elmax_api.model.scene.Scene" title="elmax_api.model.scene.Scene"><span class="pre">elmax_api.model.scene.Scene</span></a></span></span><a class="headerlink" href="#elmax_api.model.scene.Scene.from_api_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new scene configuration object from the API json response</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-elmax_api.model.zone">
+<span id="elmax-api-model-zone-module"></span><h2>elmax_api.model.zone module<a class="headerlink" href="#module-elmax_api.model.zone" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="elmax_api.model.zone.Zone">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">elmax_api.model.zone.</span></span><span class="sig-name descname"><span class="pre">Zone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opened</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excluded</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elmax_api.model.zone.Zone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#elmax_api.model.endpoint.DeviceEndpoint" title="elmax_api.model.endpoint.DeviceEndpoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">elmax_api.model.endpoint.DeviceEndpoint</span></code></a></p>
+<p>Representation of a zone configuration</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.zone.Zone.excluded">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">excluded</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#elmax_api.model.zone.Zone.excluded" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elmax_api.model.zone.Zone.from_api_response">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_api_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response_entry</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#elmax_api.model.zone.Zone" title="elmax_api.model.zone.Zone"><span class="pre">elmax_api.model.zone.Zone</span></a></span></span><a class="headerlink" href="#elmax_api.model.zone.Zone.from_api_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new zone configuration object from the API json response</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elmax_api.model.zone.Zone.opened">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">opened</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#elmax_api.model.zone.Zone.opened" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-elmax_api.model">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-elmax_api.model" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="elmax_api.html" class="btn btn-neutral float-left" title="elmax_api package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alberto Geniola.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+    <!-- Theme Analytics -->
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'G-JEC9YKMV5X', 'auto');
+    
+    ga('send', 'pageview');
+    </script>
+
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,356 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Basic Concepts &mdash; Elmax API  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Quick Start" href="examples/quickstart.html" />
+    <link rel="prev" title="Welcome to Elmax API’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Elmax API
+          
+
+          
+            
+            <img src="_static/elmax-logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Api reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Basic Concepts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-http-client">The HTTP Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#authentication-and-login">Authentication and login</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#elmax-model">Elmax Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#listing-panels">Listing Panels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fetch-panel-status">Fetch panel status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#send-commands-to-actuators">Send commands to actuators</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples/quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/modules.html">elmax_api</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Elmax API</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Basic Concepts</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/basic.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="basic-concepts">
+<h1>Basic Concepts<a class="headerlink" href="#basic-concepts" title="Permalink to this headline">¶</a></h1>
+<p>This library implements an asynchronous HTTP api client against hte Elmax HTTP web endpoint.
+The core functionality of the library is implemented within the <code class="xref py py-class docutils literal notranslate"><span class="pre">elmax_api.http.Elmax</span></code> class.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>You need to be familiar with asyncio and python asynchronous programming pattern.
+This library is not designed to work as blocking threaded model.</p>
+</div>
+<div class="section" id="the-http-client">
+<h2>The HTTP Client<a class="headerlink" href="#the-http-client" title="Permalink to this headline">¶</a></h2>
+<p>To get started, simply instantiate an instance of Elmax client:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Instantiate the Elmax API client</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">Elmax</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">MY_USERNAME</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">MY_PASSWORD</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This operation won’t attempt any login/connection to the remote cloud, but simply
+construct the client object.</p>
+</div>
+<p>Once created, you can start fetching data from the Elmax Cloud or issuing commands to it.
+Have a look at the <a class="reference internal" href="examples/quickstart.html#quickstart"><span class="std std-ref">Quick Start</span></a> section to get your hands dirty right away.</p>
+</div>
+<div class="section" id="authentication-and-login">
+<h2>Authentication and login<a class="headerlink" href="#authentication-and-login" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">Elmax</span></code> client handles login and authentication autonomously.
+Whenever needed, the client will call the login endpoint and authenticates with username/password
+provided to the constructor. If the login succeeds, the obtained JWT token is stored into memory for later
+use. Thus, everytime the client needs to invoke authenticated APIs, it reuses the cached JTW token.
+If, for any reason, the JWT gets refused (as per expiration or invalidation), the library will try again to
+renews it using the stored user credentials.</p>
+<p>In case the developers wants to check the validity of user-provided credentials, he can explicitly invoke the
+<code class="xref py py-func docutils literal notranslate"><span class="pre">login()</span></code> method, which raises a <code class="xref py py-class docutils literal notranslate"><span class="pre">ElmaxBadLoginError</span></code> in case of bad credentials.</p>
+</div>
+<div class="section" id="elmax-model">
+<h2>Elmax Model<a class="headerlink" href="#elmax-model" title="Permalink to this headline">¶</a></h2>
+<p>This library deals with the following entities.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Panel</dt><dd><p>Represents an Elmax Control Panel.
+A Panel is the computational entity which activates actuators and reads zones status.
+A given user, may have multiple panels associated, although this usually means he owns multiple houses/facilities.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Actuator (switch)</dt><dd><p>Is a device that can be activated. It usually has two possible states: on/off.
+The current version of this library handles two main actuator classes: switches (on/off) and covers (up/down).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Zone (sensor)</dt><dd><p>A zone is nothing more than a sensor (volumetric, magnetic, etc).
+Usually a zone represents a specific door/window of the house perimeter.
+As such, a zone can be open or closed.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Area</dt><dd><p>An area is a logical grouping of zones. For instance we can have the kitchen area or the living area.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Scene</dt><dd><p>Scenes are automations that accomplish some objective.
+Common scenes might be “I’m home” (disable alarms open windows) or “I’m leaving” (closes the doors/windows)
+and activates away mode alarm.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="listing-panels">
+<h2>Listing Panels<a class="headerlink" href="#listing-panels" title="Permalink to this headline">¶</a></h2>
+<p>In order to list the panels associated to the current authenticated user,
+simply invoke the <code class="xref py py-func docutils literal notranslate"><span class="pre">list_control_panels()</span></code> method.
+This method returns a list of <code class="xref py py-class docutils literal notranslate"><span class="pre">PanelEntry</span></code>, which the developer can use to retrieve the
+name/id/online-status of associated control panels.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># List panels for your user</span>
+<span class="n">panels</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">list_control_panels</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found {len(panels)} panels for user {client.get_authenticated_username()}&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="fetch-panel-status">
+<h2>Fetch panel status<a class="headerlink" href="#fetch-panel-status" title="Permalink to this headline">¶</a></h2>
+<p>Given a <code class="xref py py-class docutils literal notranslate"><span class="pre">PanelEntry</span></code>, the developer can retrieve its full status by invoking the <code class="xref py py-func docutils literal notranslate"><span class="pre">get_panel_status()</span></code>
+function. This function takes one mandatory argument <cite>control_panel_id</cite> and an optional <cite>pin</cite> code.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ...</span>
+<span class="c1"># p is a panel entry retrieved via list_control_panels()</span>
+<span class="n">panel_status</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">get_panel_status</span><span class="p">(</span><span class="n">control_panel_id</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The library can only talk to panels that a re currently online. Trying to fetch information from an
+offline panel will likely result an exception being thrown</p>
+</div>
+<p>The panel_status object returned by the client contains information about zones, areas and much more.
+Refer to the <code class="xref py py-class docutils literal notranslate"><span class="pre">elmax_api.model.PanelStatus</span></code> object for more information.</p>
+</div>
+<div class="section" id="send-commands-to-actuators">
+<h2>Send commands to actuators<a class="headerlink" href="#send-commands-to-actuators" title="Permalink to this headline">¶</a></h2>
+<p>In order to control actuators connected to the Elmax control panel, the developer must first retrieve the
+endpoint_id associated to the device he wants to send the command to. The list of actuators available to a
+given panel is available within the <code class="xref py py-attr docutils literal notranslate"><span class="pre">elmax_api.model.PanelStatus.actuators</span></code> property.</p>
+<p>To send a command to a specicic actuator, the developer relies on <code class="xref py py-func docutils literal notranslate"><span class="pre">execute_command()</span></code> function.
+This function accepts, at minimum, following parameters endpoint_id and command. The former, is the
+id of the actuator within the current panel. The latter is the command that the develoepr wants to issue to the device.
+The list of accepted commands is described within the <code class="xref py py-mod docutils literal notranslate"><span class="pre">elmax_api.command</span></code> module.</p>
+<p>The current version of the library supports the following actions:</p>
+<ol class="arabic simple">
+<li><p>Turn a device on/off</p></li>
+<li><p>Send the UP/DOWN command to a cover</p></li>
+<li><p>Trigger a scene</p></li>
+<li><p>Arm an area</p></li>
+<li><p>Disarm an area</p></li>
+</ol>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="examples/quickstart.html" class="btn btn-neutral float-right" title="Quick Start" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Elmax API’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alberto Geniola.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+    <!-- Theme Analytics -->
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'G-JEC9YKMV5X', 'auto');
+    
+    ga('send', 'pageview');
+    </script>
+
+    
+   
+
+</body>
+</html>
