@@ -27,14 +27,20 @@ def setup_module(module):
     entry = online_panels[0]  # type:PanelEntry
 
 
-async def get_area():
+async def get_area(only_armable=False):
     # Retrieve current area status
     panel = await client.get_panel_status(control_panel_id=entry.hash)
     assert isinstance(panel, PanelStatus)
     assert len(panel.areas) > 0
     # Do not work with un-armable areas
-    a = filter(lambda x: x.status != AlarmStatus.NOT_ARMED_NOT_ARMABLE, panel.areas)
-    return list(a)[0]
+    if only_armable:
+        a = list(filter(lambda x: x.status != AlarmStatus.NOT_ARMED_NOT_ARMABLE, panel.areas))
+    else:
+        a = panel.areas
+    if len(a) < 1:
+        return None
+    else:
+        return a[0]
 
 
 async def reset_area_status(area: Area, command: AreaCommand, expected_arm_status: AlarmArmStatus, code: str = "000000") -> Area:
@@ -56,8 +62,9 @@ async def reset_area_status(area: Area, command: AreaCommand, expected_arm_statu
 
 @pytest.mark.asyncio
 async def test_area_wrong_disarm_code():
-    # Make sure the area is disarmed
-    area = await get_area()
+    area = await get_area(only_armable=True)
+    if area is None:
+        pytest.skip("No armable areas found to test")
     if area.armed_status != AlarmArmStatus.NOT_ARMED:
         await reset_area_status(area=area, command=AreaCommand.DISARM, expected_arm_status=AlarmArmStatus.NOT_ARMED)
 
@@ -84,7 +91,9 @@ async def test_area_wrong_disarm_code():
 @pytest.mark.asyncio
 async def test_area_arming_totally():
     # Make sure the area is disarmed
-    area = await get_area()
+    area = await get_area(only_armable=True)
+    if area is None:
+        pytest.skip("No armable areas found to test")
     if area.armed_status != AlarmArmStatus.NOT_ARMED:
         await reset_area_status(area=area, command=AreaCommand.DISARM, expected_arm_status=AlarmArmStatus.NOT_ARMED)
 
@@ -99,7 +108,9 @@ async def test_area_arming_totally():
 @pytest.mark.asyncio
 async def test_area_disarm():
     # Make sure the area is armed first
-    area = await get_area()
+    area = await get_area(only_armable=True)
+    if area is None:
+        pytest.skip("No armable areas found to test")
     if area.armed_status != AlarmArmStatus.ARMED_TOTALLY:
         await reset_area_status(area=area, command=AreaCommand.ARM_TOTALLY, expected_arm_status=AlarmArmStatus.ARMED_TOTALLY)
 
