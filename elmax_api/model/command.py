@@ -14,7 +14,6 @@ class CoverCommand(Command):
     UP = "up"
     DOWN = "down"
 
-
 class AreaCommand(Command):
     ARM_TOTALLY = 4
     ARM_P1_P2 = 3

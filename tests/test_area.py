@@ -3,33 +3,29 @@ import asyncio
 
 import pytest
 
-from elmax_api.exceptions import ElmaxBadPinError, ElmaxPanelBusyError, ElmaxApiError
-from elmax_api.http import Elmax
+from elmax_api.exceptions import ElmaxApiError
 from elmax_api.model.alarm_status import AlarmStatus, AlarmArmStatus
 from elmax_api.model.area import Area
-from elmax_api.model.command import Command, AreaCommand
+from elmax_api.model.command import AreaCommand
 from elmax_api.model.panel import PanelStatus, PanelEntry
-from tests import USERNAME, PASSWORD
+from tests import client, LOCAL_TEST
 
-
-client = Elmax(username=USERNAME, password=PASSWORD)
-entry = None  # type:PanelEntry
 
 def setup_module(module):
-    global entry
-    print ("This will at start of module")
 
-    panels = asyncio.run(client.list_control_panels())
-    online_panels = list(filter(lambda x: x.online, panels))
-    assert len(online_panels) > 0
+    if not LOCAL_TEST:
+        panels = asyncio.run(client.list_control_panels())
+        online_panels = list(filter(lambda x: x.online, panels))
+        assert len(online_panels) > 0
 
-    # Select the first online panel
-    entry = online_panels[0]  # type:PanelEntry
+        # Select the first online panel
+        entry = online_panels[0]  # type:PanelEntry
+        client.current_panel_id = entry.hash
 
 
 async def get_area(only_armable=False):
     # Retrieve current area status
-    panel = await client.get_panel_status(control_panel_id=entry.hash)
+    panel = await client.get_current_panel_status()
     assert isinstance(panel, PanelStatus)
     assert len(panel.areas) > 0
     # Do not work with un-armable areas

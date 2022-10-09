@@ -1,18 +1,18 @@
 """Test the actuator functionalities."""
 import asyncio
+import time
 
 import pytest
 
-from elmax_api.http import Elmax
+from elmax_api.http import GenericElmax
 from elmax_api.model.command import CoverCommand
 from elmax_api.model.cover import Cover
 from elmax_api.model.cover_status import CoverStatus
 from elmax_api.model.panel import PanelStatus, PanelEntry
-from tests import USERNAME, PASSWORD
-import time
+from tests import client, LOCAL_TEST
 
 
-async def wait_for_cover_status(client: Elmax, endpoint_id: str, status: CoverStatus, timeout: float) -> bool:
+async def wait_for_cover_status(client: GenericElmax, endpoint_id: str, status: CoverStatus, timeout: float) -> bool:
     t = time.time()
     deadline = t + timeout
 
@@ -27,7 +27,7 @@ async def wait_for_cover_status(client: Elmax, endpoint_id: str, status: CoverSt
     return False
 
 
-async def wait_for_cover_position(client: Elmax, endpoint_id: str, position: int, timeout: float) -> bool:
+async def wait_for_cover_position(client: GenericElmax, endpoint_id: str, position: int, timeout: float) -> bool:
     t = time.time()
     deadline = t + timeout
 
@@ -42,20 +42,23 @@ async def wait_for_cover_position(client: Elmax, endpoint_id: str, position: int
     raise TimeoutError()
 
 
+def setup_module(module):
+    if not LOCAL_TEST:
+        panels = asyncio.run(client.list_control_panels())
+        online_panels = list(filter(lambda x: x.online, panels))
+        assert len(online_panels) > 0
+
+        # Select the first online panel
+        entry = online_panels[0]  # type:PanelEntry
+        client.current_panel_id = entry.hash
+
+
 @pytest.mark.asyncio
 async def test_open_close():
-    client = Elmax(username=USERNAME, password=PASSWORD)
-    panels = await client.list_control_panels()
-    online_panels = list(filter(lambda x: x.online, panels))
-    assert len(online_panels) > 0
-
-    # Select the first online panel
-    entry = online_panels[0]  # type:PanelEntry
-
     # Do this twice so we toggle every cover up->down and down ->up
     for i in range(2):
         # Retrieve its status
-        panel = await client.get_panel_status(control_panel_id=entry.hash)  # type: PanelStatus
+        panel = await client.get_current_panel_status()  # type: PanelStatus
         assert isinstance(panel, PanelStatus)
 
         # Store old status into a dictionary for later comparison
@@ -80,18 +83,10 @@ async def test_open_close():
 
 @pytest.mark.asyncio
 async def test_up_down_states():
-    client = Elmax(username=USERNAME, password=PASSWORD)
-    panels = await client.list_control_panels()
-    online_panels = list(filter(lambda x: x.online, panels))
-    assert len(online_panels) > 0
-
-    # Select the first online panel
-    entry = online_panels[0]  # type:PanelEntry
-
     # Do this twice so we toggle every cover up->down and down ->up
     for i in range(2):
         # Retrieve its status
-        panel = await client.get_panel_status(control_panel_id=entry.hash)  # type: PanelStatus
+        panel = await client.get_current_panel_status()  # type: PanelStatus
         assert isinstance(panel, PanelStatus)
 
         # Store old status into a dictionary for later comparison
