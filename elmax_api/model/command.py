@@ -11,8 +11,8 @@ class SwitchCommand(Command):
 
 
 class CoverCommand(Command):
-    UP = "up"
-    DOWN = "down"
+    UP = 1
+    DOWN = 2
 
 class AreaCommand(Command):
     ARM_TOTALLY = 4
