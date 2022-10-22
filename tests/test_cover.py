@@ -39,6 +39,7 @@ async def wait_for_cover_position(client: GenericElmax, endpoint_id: str, positi
                 return True
         finally:
             await asyncio.sleep(delay=2)
+    print("TIMEOUT WHILE WAITING FOR COVER MOVING")
     raise TimeoutError()
 
 
@@ -48,9 +49,11 @@ def setup_module(module):
         online_panels = list(filter(lambda x: x.online, panels))
         assert len(online_panels) > 0
 
-        # Select the first online panel
-        entry = online_panels[0]  # type:PanelEntry
-        client.current_panel_id = entry.hash
+        # Select the first online panel which has covers
+        for panel in online_panels:
+            panel_status = asyncio.run(client.get_panel_status(panel.hash))
+            if len(panel_status.covers) > 0:
+                client.current_panel_id = panel.hash
 
 
 @pytest.mark.asyncio
@@ -61,6 +64,9 @@ async def test_open_close():
         panel = await client.get_current_panel_status()  # type: PanelStatus
         assert isinstance(panel, PanelStatus)
 
+        if len(panel.covers) < 1:
+            pytest.skip(f"No covers found on the specified panel: {client.current_panel_id}")
+
         # Store old status into a dictionary for later comparison
         cover_position = { cover.endpoint_id: cover.position for cover in panel.covers}
 
@@ -70,7 +76,7 @@ async def test_open_close():
             command = CoverCommand.UP if curr_status==0 else CoverCommand.DOWN
             await client.execute_command(endpoint_id=endpoint_id, command=command)
             expected_position = 100 if command==CoverCommand.UP else 0
-            t = wait_for_cover_position(client=client, endpoint_id=endpoint_id, position=expected_position, timeout=20.0)
+            t = wait_for_cover_position(client=client, endpoint_id=endpoint_id, position=expected_position, timeout=30.0)
             tasks.append(t)
 
         # Ensure all the actuators switched correctly
