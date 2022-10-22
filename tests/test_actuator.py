@@ -3,24 +3,27 @@ import asyncio
 
 import pytest
 
-from elmax_api.http import Elmax
 from elmax_api.model.command import SwitchCommand
 from elmax_api.model.panel import PanelStatus, PanelEntry
-from tests import USERNAME, PASSWORD
+from tests import client, LOCAL_TEST
+
+
+def setup_module(module):
+
+    if not LOCAL_TEST:
+        panels = asyncio.run(client.list_control_panels())
+        online_panels = list(filter(lambda x: x.online, panels))
+        assert len(online_panels) > 0
+
+        # Select the first online panel
+        entry = online_panels[0]  # type:PanelEntry
+        client.current_panel_id = entry.hash
 
 
 @pytest.mark.asyncio
 async def test_device_command():
-    client = Elmax(username=USERNAME, password=PASSWORD)
-    panels = await client.list_control_panels()
-    online_panels = list(filter(lambda x: x.online, panels))
-    assert len(online_panels) > 0
-
-    # Select the first online panel
-    entry = online_panels[0]  # type:PanelEntry
-
     # Retrieve its status
-    panel = await client.get_panel_status(control_panel_id=entry.hash)  # type: PanelStatus
+    panel = await client.get_current_panel_status()  # type: PanelStatus
     assert isinstance(panel, PanelStatus)
 
     # Store old status into a dictionary for later comparison
@@ -33,7 +36,7 @@ async def test_device_command():
 
     # Ensure all the actuators switched correctly
     await asyncio.sleep(3)
-    panel = await client.get_panel_status(control_panel_id=entry.hash)  # type: PanelStatus
+    panel = await client.get_current_panel_status()  # type: PanelStatus
 
     for actuator in panel.actuators:
         expected_status = not actuator_status[actuator.endpoint_id]
