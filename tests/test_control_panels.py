@@ -3,6 +3,7 @@ import asyncio
 
 import pytest
 
+from elmax_api.constants import DEFAULT_PANEL_PIN
 from elmax_api.exceptions import ElmaxBadPinError
 from elmax_api.model.actuator import Actuator
 from elmax_api.model.area import Area
@@ -59,7 +60,9 @@ async def test_wrong_pin():
 
     # Retrieve its status
     with pytest.raises(ElmaxBadPinError):
+        client.set_current_panel(panel.hash, "111111")
         status = await client.get_current_panel_status()  # type: PanelStatus
+        client.set_current_panel(panel.hash, DEFAULT_PANEL_PIN)
 
 
 @pytest.mark.asyncio
