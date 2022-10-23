@@ -46,7 +46,6 @@ async def test_get_control_panel_status():
     #assert status.user_email == USERNAME
 
 
-
 @pytest.mark.asyncio
 async def test_wrong_pin():
     if LOCAL_TEST:
@@ -61,9 +60,11 @@ async def test_wrong_pin():
     # Retrieve its status
     with pytest.raises(ElmaxBadPinError):
         client.set_current_panel(panel.hash, "111111")
-        status = await client.get_current_panel_status()  # type: PanelStatus
-        client.set_current_panel(panel.hash, DEFAULT_PANEL_PIN)
+        # This will trigger the exception
+        await client.get_current_panel_status()  # type: PanelStatus
 
+    # Make sure to re-set the original panel pin
+    client.set_current_panel(panel.hash, DEFAULT_PANEL_PIN)
 
 @pytest.mark.asyncio
 async def test_single_device_status():
