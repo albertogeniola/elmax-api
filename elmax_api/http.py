@@ -14,7 +14,7 @@ import jwt
 from yarl import URL
 
 from elmax_api.constants import BASE_URL, ENDPOINT_LOGIN, USER_AGENT, ENDPOINT_DEVICES, ENDPOINT_DISCOVERY, \
-    ENDPOINT_STATUS_ENTITY_ID, DEFAULT_HTTP_TIMEOUT, BUSY_WAIT_INTERVAL, ENDPOINT_LOCAL_CMD
+    ENDPOINT_STATUS_ENTITY_ID, DEFAULT_HTTP_TIMEOUT, BUSY_WAIT_INTERVAL, ENDPOINT_LOCAL_CMD, DEFAULT_PANEL_PIN
 from elmax_api.exceptions import ElmaxBadLoginError, ElmaxApiError, ElmaxNetworkError, ElmaxBadPinError, \
     ElmaxPanelBusyError
 from elmax_api.model.command import Command
@@ -71,7 +71,7 @@ class GenericElmax(ABC):
     It handles data marshalling/unmarshalling, login and token renewal upon expiration.
     """
 
-    def __init__(self, base_url:str=BASE_URL, current_panel_id: str = None, current_panel_pin: str = "000000"):
+    def __init__(self, base_url:str=BASE_URL, current_panel_id: str = None, current_panel_pin: str = DEFAULT_PANEL_PIN):
         """Base constructor.
 
         Args:
@@ -164,9 +164,9 @@ class GenericElmax(ABC):
     def current_panel_id(self) -> str:
         return self._current_panel_id
 
-    @current_panel_id.setter
-    def current_panel_id(self, value: str):
-        self._current_panel_id = value
+    def set_current_panel(self, panel_id: str, panel_pin: str = DEFAULT_PANEL_PIN):
+        self._current_panel_id = panel_id
+        self._current_panel_pin = panel_pin
 
     @property
     def is_authenticated(self) -> bool:
@@ -381,7 +381,7 @@ class Elmax(GenericElmax):
     @async_auth
     async def get_panel_status(self,
                                control_panel_id: str,
-                               pin: Optional[str] = "000000") -> PanelStatus:
+                               pin: Optional[str] = DEFAULT_PANEL_PIN) -> PanelStatus:
         """
         Fetches the control panel status.
 
@@ -452,7 +452,9 @@ class ElmaxLocal(GenericElmax):
             panel_code: authentication code to be used with the panel
         """
         super(ElmaxLocal, self).__init__(base_url=panel_api_url)
-        self._panel_code = panel_code
+        # The current version of the local API does not expose the panel ID attribute,
+        # so we use the panel IP as ID
+        self.set_current_panel(panel_id=panel_api_url, panel_pin=panel_code)
 
     async def login(self, *args, **kwargs) -> Dict:
         """
@@ -464,7 +466,7 @@ class ElmaxLocal(GenericElmax):
         """
         url = self._base_url / ENDPOINT_LOGIN
         data = {
-            "pin": self._panel_code
+            "pin": self._current_panel_pin
         }
         try:
             response_data = await self._request(

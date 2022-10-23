@@ -3,6 +3,7 @@ import asyncio
 
 import pytest
 
+from elmax_api.constants import DEFAULT_PANEL_PIN
 from elmax_api.exceptions import ElmaxApiError
 from elmax_api.model.alarm_status import AlarmStatus, AlarmArmStatus
 from elmax_api.model.area import Area
@@ -20,7 +21,7 @@ def setup_module(module):
 
         # Select the first online panel
         entry = online_panels[0]  # type:PanelEntry
-        client.current_panel_id = entry.hash
+        client.set_current_panel(panel_id=entry.hash)
 
 
 async def get_area(only_armable=False):
@@ -39,7 +40,7 @@ async def get_area(only_armable=False):
         return a[0]
 
 
-async def reset_area_status(area: Area, command: AreaCommand, expected_arm_status: AlarmArmStatus, code: str = "000000") -> Area:
+async def reset_area_status(area: Area, command: AreaCommand, expected_arm_status: AlarmArmStatus, code: str = DEFAULT_PANEL_PIN) -> Area:
     res = await client.execute_command(endpoint_id=area.endpoint_id, command=command, extra_payload={"code": code})
 
     attempts = 0

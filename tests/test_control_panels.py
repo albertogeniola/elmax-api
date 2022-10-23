@@ -22,7 +22,7 @@ def setup_module(module):
 
         # Select the first online panel
         entry = online_panels[0]
-        client.current_panel_id = entry.hash
+        client.set_current_panel(panel_id=entry.hash)
 
 
 @pytest.mark.asyncio

@@ -50,11 +50,16 @@ def setup_module(module):
         assert len(online_panels) > 0
 
         # Select the first online panel which has covers
+        panel_found = False
         for panel in online_panels:
             panel_status = asyncio.run(client.get_panel_status(panel.hash))
             if len(panel_status.covers) > 0:
-                client.current_panel_id = panel.hash
+                panel_found = True
+                client.set_current_panel(panel_id=panel.hash)
+                break
 
+        if not panel_found:
+            pytest.skip("No panel found to run this test set.")
 
 @pytest.mark.asyncio
 async def test_open_close():
