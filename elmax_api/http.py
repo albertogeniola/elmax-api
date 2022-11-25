@@ -5,6 +5,7 @@ This module handles HTTP api calls to the Elmax WEB endpoint, implemented by the
 import asyncio
 import functools
 import logging
+import ssl
 import time
 from enum import Enum
 from typing import Dict, List, Optional, Union
@@ -71,13 +72,16 @@ class GenericElmax(ABC):
     It handles data marshalling/unmarshalling, login and token renewal upon expiration.
     """
 
-    def __init__(self, base_url:str=BASE_URL, current_panel_id: str = None, current_panel_pin: str = DEFAULT_PANEL_PIN):
+    def __init__(self,base_url:str=BASE_URL,current_panel_id: str = None, current_panel_pin: str = DEFAULT_PANEL_PIN,
+                 timeout: float = DEFAULT_HTTP_TIMEOUT, ssl_context: Optional[ssl.SSLContext] = None):
         """Base constructor.
 
         Args:
             base_url: API server base-URL
             current_panel_id: Panel id of the preferred panel
             current_panel_pin: Panel PIN of the preferred panel
+            timeout: The default timeout, in seconds, to set up for the inner HTTP client
+            ssl_contex: an SSL context to override the default one
         """
         self._raw_jwt = None
         self._jwt = None
@@ -85,6 +89,19 @@ class GenericElmax(ABC):
         self._current_panel_id = current_panel_id
         self._current_panel_pin = current_panel_pin
         self._base_url = URL(base_url)
+
+        # Build the SSL context we trust
+        sslcontext = ssl_context if ssl_context is not None else True
+        self._http_client = httpx.AsyncClient(timeout=timeout, verify=sslcontext)
+
+    @classmethod
+    async def retrieve_server_certificate(cls, hostname:str, port:int):
+        pem_server_certificate = ssl.get_server_certificate((hostname, port))
+        return pem_server_certificate
+
+    def set_default_timeout(self, timeout: float):
+        """Sets the default timeout (in seconds) for the HTTP client"""
+        self._http_client.timeout = timeout
 
     async def _request(
             self,
@@ -121,39 +138,38 @@ class GenericElmax(ABC):
             headers["Authorization"] = f"JWT {self._raw_jwt}"
 
         try:
-            async with httpx.AsyncClient(timeout=timeout) as client:
-                if method == Elmax.HttpMethod.GET:
-                    response = await client.get(str(url), headers=headers, params=data)
-                elif method == Elmax.HttpMethod.POST:
-                    response = await client.post(str(url), headers=headers, json=data)
-                else:
-                    raise ValueError("Invalid/Unhandled method. Expecting GET or POST")
+            if method == Elmax.HttpMethod.GET:
+                response = await self._http_client.get(str(url), headers=headers, params=data, timeout=timeout)
+            elif method == Elmax.HttpMethod.POST:
+                response = await self._http_client.post(str(url), headers=headers, json=data, timeout=timeout)
+            else:
+                raise ValueError("Invalid/Unhandled method. Expecting GET or POST")
 
-                _LOGGER.debug(
-                    "HTTP Request %s %s -> Status code: %d",
-                    str(method),
+            _LOGGER.debug(
+                "HTTP Request %s %s -> Status code: %d",
+                str(method),
+                url,
+                response.status_code,
+            )
+            if response.status_code != 200:
+                _LOGGER.error(
+                    "Api call failed. Method=%s, Url=%s, Data=%s. Response code=%d. Response content=%s",
+                    method,
                     url,
+                    str(data),
                     response.status_code,
+                    str(response.content),
                 )
-                if response.status_code != 200:
-                    _LOGGER.error(
-                        "Api call failed. Method=%s, Url=%s, Data=%s. Response code=%d. Response content=%s",
-                        method,
-                        url,
-                        str(data),
-                        response.status_code,
-                        str(response.content),
-                    )
-                    raise ElmaxApiError(status_code=response.status_code)
+                raise ElmaxApiError(status_code=response.status_code)
 
-                # TODO: the current API version does not return an error description nor an error http
-                #  status code for invalid logins. Instead, an empty body is returned. In that case we
-                #  assume the login failed due to invalid user/pass combination
-                response_content = response.text
-                if response_content == '':
-                    raise ElmaxBadLoginError()
+            # TODO: the current API version does not return an error description nor an error http
+            #  status code for invalid logins. Instead, an empty body is returned. In that case we
+            #  assume the login failed due to invalid user/pass combination
+            response_content = response.text
+            if response_content == '':
+                raise ElmaxBadLoginError()
 
-                return response.json()
+            return response.json()
 
         # Wrap any other HTTP/NETWORK error
         except (httpx.ConnectError, httpx.ReadTimeout):
@@ -444,14 +460,15 @@ class ElmaxLocal(GenericElmax):
     """
     Class implementing the Local HTTP API client.
     """
-    def __init__(self, panel_api_url: str, panel_code: str):
+    def __init__(self, panel_api_url: str, panel_code: str, ssl_context: ssl.SSLContext = None):
         """Client constructor.
 
         Args:
             panel_api_url: API address of the Elmax Panel
             panel_code: authentication code to be used with the panel
+            ssl_context: SSLContext object to use for SSL verification
         """
-        super(ElmaxLocal, self).__init__(base_url=panel_api_url)
+        super(ElmaxLocal, self).__init__(base_url=panel_api_url,ssl_context=ssl_context)
         # The current version of the local API does not expose the panel ID attribute,
         # so we use the panel IP as ID
         self.set_current_panel(panel_id=panel_api_url, panel_pin=panel_code)
