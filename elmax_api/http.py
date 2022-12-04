@@ -8,6 +8,7 @@ import logging
 import ssl
 import time
 from enum import Enum
+from socket import socket
 from typing import Dict, List, Optional, Union
 from abc import ABC, abstractmethod
 import httpx
@@ -96,8 +97,11 @@ class GenericElmax(ABC):
 
     @classmethod
     async def retrieve_server_certificate(cls, hostname:str, port:int):
-        pem_server_certificate = ssl.get_server_certificate((hostname, port))
-        return pem_server_certificate
+        try:
+            pem_server_certificate = ssl.get_server_certificate((hostname, port))
+            return pem_server_certificate
+        except (socket.gaierror, ConnectionRefusedError) as ex:
+            raise ElmaxNetworkError from ex
 
     def set_default_timeout(self, timeout: float):
         """Sets the default timeout (in seconds) for the HTTP client"""
@@ -490,7 +494,7 @@ class ElmaxLocal(GenericElmax):
                 method=Elmax.HttpMethod.POST, url=url, data=data, authorized=False
             )
         except ElmaxApiError as e:
-            if e.status_code == 401:
+            if e.status_code in (401, 403):
                 raise ElmaxBadLoginError()
             raise
 
