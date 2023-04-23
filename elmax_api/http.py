@@ -39,6 +39,7 @@ def async_auth(func, *method_args, **method_kwargs):
     It takes care to verify the validity of a JWT token before issuing the method call.
     In case the JWT is expired, or close to expiration date, it tries to renew it.
     """
+
     @functools.wraps(func, *method_args, **method_kwargs)
     async def wrapper(*args, **kwargs):
         # Check whether the client has a valid token to be used. We consider valid tokens with expiration time
@@ -73,7 +74,8 @@ class GenericElmax(ABC):
     It handles data marshalling/unmarshalling, login and token renewal upon expiration.
     """
 
-    def __init__(self,base_url:str=BASE_URL,current_panel_id: str = None, current_panel_pin: str = DEFAULT_PANEL_PIN,
+    def __init__(self, base_url: str = BASE_URL, current_panel_id: str = None,
+                 current_panel_pin: str = DEFAULT_PANEL_PIN,
                  timeout: float = DEFAULT_HTTP_TIMEOUT, ssl_context: Optional[ssl.SSLContext] = None):
         """Base constructor.
 
@@ -96,7 +98,7 @@ class GenericElmax(ABC):
         self._http_client = httpx.AsyncClient(timeout=timeout, verify=sslcontext)
 
     @classmethod
-    async def retrieve_server_certificate(cls, hostname:str, port:int):
+    async def retrieve_server_certificate(cls, hostname: str, port: int):
         try:
             pem_server_certificate = ssl.get_server_certificate((hostname, port))
             return pem_server_certificate
@@ -113,10 +115,11 @@ class GenericElmax(ABC):
             url: str,
             data: Optional[Dict] = None,
             authorized: bool = False,
-            timeout: float = DEFAULT_HTTP_TIMEOUT
+            timeout: float = DEFAULT_HTTP_TIMEOUT,
+            retry_attempts: int = 3
     ) -> Dict:
         """
-        Executes a HTTP API request against a given endpoint, parses the output and returns the
+        Executes an HTTP API request against a given endpoint, parses the output and returns the
         json to the caller. It handles most basic IO exceptions.
         If the API returns a non 200 response, this method raises an `ElmaxApiError`
 
@@ -125,6 +128,8 @@ class GenericElmax(ABC):
             url: Target request URL
             data: Json data/Data to post in POST messages. Ignored when issuing GET requests
             authorized: When set, the request is performed passing the stored authorization token
+            timeout: timeout in seconds for a single attempt
+            retry_attempts: number of retry attempts in case of 422 (panel busy)
 
         Returns:
             Dict: The dictionary object containing authenticated JWT data
@@ -132,7 +137,32 @@ class GenericElmax(ABC):
         Raises:
             ElmaxApiError: Whenever a non 200 return code is returned by the remote server
             ElmaxNetworkError: If the http request could not be completed due to a network error
+            ElmaxPanelBusyError: If the number of retries have been exhausted while the panel returned a busy state (422)
         """
+        retry_attempt = 0
+        while retry_attempt < retry_attempts:
+            try:
+                response_data = await self._internal_request(method=method, url=url, data=data, authorized=authorized,
+                                                             timeout=timeout)
+                _LOGGER.debug(response_data)
+                return response_data
+            except ElmaxApiError as e:
+                if e.status_code == 422:
+                    retry_attempt += 1
+                    _LOGGER.error("Panel is busy. Command will be retried in a moment.")
+                    await asyncio.sleep(BUSY_WAIT_INTERVAL)
+                else:
+                    raise
+        raise ElmaxPanelBusyError()
+
+    async def _internal_request(
+            self,
+            method: "Elmax.HttpMethod",
+            url: str,
+            data: Optional[Dict] = None,
+            authorized: bool = False,
+            timeout: float = DEFAULT_HTTP_TIMEOUT
+    ) -> Dict:
         headers = {
             "User-Agent": USER_AGENT,
             "Accept": "application/json",
@@ -166,7 +196,7 @@ class GenericElmax(ABC):
                 )
                 raise ElmaxApiError(status_code=response.status_code)
 
-            # TODO: the current API version does not return an error description nor an error http
+            # The current API version does not return an error description nor an error http
             #  status code for invalid logins. Instead, an empty body is returned. In that case we
             #  assume the login failed due to invalid user/pass combination
             response_content = response.text
@@ -176,7 +206,7 @@ class GenericElmax(ABC):
             return response.json()
 
         # Wrap any other HTTP/NETWORK error
-        except (httpx.ConnectError, httpx.ReadTimeout):
+        except (httpx.ConnectError, httpx.ReadTimeout) as e:
             _LOGGER.exception("An unhandled error occurred while executing API Call.")
             raise ElmaxNetworkError("A network error occurred")
 
@@ -197,7 +227,7 @@ class GenericElmax(ABC):
             bool: True if there is a valid JWT token, False if there's no token or if it is expired
         """
         if self._jwt is None:
-            # The user did not login yet
+            # The user did not log in yet
             return False
         if self._jwt.get("exp", 0) <= time.time():
             self._jwt = None
@@ -266,10 +296,10 @@ class GenericElmax(ABC):
     @async_auth
     @abstractmethod
     async def execute_command(self,
-                               endpoint_id: str,
-                               command: Union[Command, str],
-                               extra_payload: Dict = None,
-                               retry_attempts: int = 3) -> Optional[Dict]:
+                              endpoint_id: str,
+                              command: Union[Command, str],
+                              extra_payload: Dict = None,
+                              retry_attempts: int = 3) -> Optional[Dict]:
         """
         Executes a command against the given endpoint
         Args:
@@ -291,20 +321,10 @@ class GenericElmax(ABC):
         if extra_payload is not None and not isinstance(extra_payload, dict):
             raise ValueError("The extra_payload parameter must be a dictionary")
 
-        retry_attempt = 0
-        while retry_attempt < retry_attempts:
-            try:
-                response_data = await self._request(Elmax.HttpMethod.POST, url=url, authorized=True, data=extra_payload)
-                _LOGGER.debug(response_data)
-                return response_data
-            except ElmaxApiError as e:
-                if e.status_code == 422:
-                    retry_attempt += 1
-                    _LOGGER.error("Panel is busy. Command will be retried in a moment.")
-                    await asyncio.sleep(BUSY_WAIT_INTERVAL)
-                else:
-                    raise
-        raise ElmaxPanelBusyError()
+        response_data = await self._request(Elmax.HttpMethod.POST, url=url, authorized=True, data=extra_payload,
+                                            retry_attempts=retry_attempts)
+        _LOGGER.debug(response_data)
+        return response_data
 
     def get_authenticated_username(self) -> Optional[str]:
         """
@@ -314,7 +334,7 @@ class GenericElmax(ABC):
         if self._jwt is None:
             return None
         return self._jwt.get("email")
-                
+
     class HttpMethod(Enum):
         """Enumerative helper for supported HTTP methods of the Elmax API"""
 
@@ -464,6 +484,7 @@ class ElmaxLocal(GenericElmax):
     """
     Class implementing the Local HTTP API client.
     """
+
     def __init__(self, panel_api_url: str, panel_code: str, ssl_context: ssl.SSLContext = None):
         """Client constructor.
 
@@ -472,7 +493,7 @@ class ElmaxLocal(GenericElmax):
             panel_code: authentication code to be used with the panel
             ssl_context: SSLContext object to use for SSL verification
         """
-        super(ElmaxLocal, self).__init__(base_url=panel_api_url,ssl_context=ssl_context)
+        super(ElmaxLocal, self).__init__(base_url=panel_api_url, ssl_context=ssl_context)
         # The current version of the local API does not expose the panel ID attribute,
         # so we use the panel IP as ID
         self.set_current_panel(panel_id=panel_api_url, panel_pin=panel_code)
