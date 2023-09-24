@@ -166,7 +166,12 @@ class EndpointStatus:
                  areas: List[Area],
                  groups: List[Group],
                  scenes: List[Scene],
-                 covers: List[Cover]):
+                 covers: List[Cover],
+                 push_feature: bool,
+                 accessory_type: str,
+                 accessory_release: str,
+                 *args,
+                 **kwargs):
 
         self._release = release
         self._cover_feature = cover_feature
@@ -177,6 +182,9 @@ class EndpointStatus:
         self._groups = groups
         self._scenes = scenes
         self._covers = covers
+        self._push_feature = push_feature
+        self._accessory_type = accessory_type
+        self._accessory_release = accessory_release
 
     @property
     def release(self) -> str:
@@ -224,13 +232,28 @@ class EndpointStatus:
         res.extend(self.zones)
         return res
 
+    @property
+    def supports_push_feature(self) -> bool:
+        return self._push_feature
+
+    @property
+    def accessory_type(self) -> str:
+        return self._accessory_type
+
+    @property
+    def accessory_release(self) -> str:
+        return self._accessory_release
+
     @staticmethod
     def from_api_response(response_entry: Dict) -> 'EndpointStatus':
         """Create a new endpoint status object from the API json response"""
         status = EndpointStatus(
-            release=response_entry.get('release'),
-            cover_feature=response_entry.get('tappFeature'),
-            scene_feature=response_entry.get('sceneFeature'),
+            release=response_entry.get('release', 'Unknown'),
+            cover_feature=response_entry.get('tappFeature', False),
+            scene_feature=response_entry.get('sceneFeature', False),
+            push_feature=response_entry.get('pushFeature', False),
+            accessory_type=response_entry.get('tipo_accessorio', 'Unknown'),
+            accessory_release=response_entry.get('release_accessorio', 'Unknown'),
             zones=[Zone.from_api_response(x) for x in response_entry.get('zone', [])],
             actuators=[Actuator.from_api_response(x) for x in response_entry.get('uscite', [])],
             areas=[Area.from_api_response(x) for x in response_entry.get('aree', [])],
