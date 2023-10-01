@@ -92,9 +92,9 @@ class GenericElmax(ABC):
         self._current_panel_id = current_panel_id
         self._current_panel_pin = current_panel_pin
         self._base_url = URL(base_url)
-
         # Build the SSL context we trust
         sslcontext = ssl_context if ssl_context is not None else True
+        self._ssl_context = sslcontext
         self._http_client = httpx.AsyncClient(timeout=timeout, verify=sslcontext)
 
     @classmethod
@@ -209,6 +209,14 @@ class GenericElmax(ABC):
         except (httpx.ConnectError, httpx.ReadTimeout) as e:
             _LOGGER.exception("An unhandled error occurred while executing API Call.")
             raise ElmaxNetworkError("A network error occurred")
+
+    @property
+    def ssl_context(self) -> ssl.SSLContext:
+        return self._ssl_context
+
+    @property
+    def base_url(self) -> URL:
+        return self._base_url
 
     @property
     def current_panel_id(self) -> str:
