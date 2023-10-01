@@ -69,7 +69,13 @@ class PanelStatus:
                  areas: List[Area],
                  groups: List[Group],
                  scenes: List[Scene],
-                 covers: List[Cover]):
+                 covers: List[Cover],
+                 push_feature: bool,
+                 accessory_type: str,
+                 accessory_release: str,
+                 *args,
+                 **kwargs
+                 ):
 
         self._panel_id = panel_id
         self._user_email = user_email
@@ -82,6 +88,9 @@ class PanelStatus:
         self._groups = groups
         self._scenes = scenes
         self._covers = covers
+        self._push_feature = push_feature
+        self._accessory_type = accessory_type
+        self._accessory_release = accessory_release
 
     @property
     def panel_id(self) -> str:
@@ -138,6 +147,18 @@ class PanelStatus:
         res.extend(self.covers)
         return res
 
+    @property
+    def push_feature(self) -> bool:
+        return self._push_feature
+
+    @property
+    def accessory_type(self) -> str:
+        return self._accessory_type
+
+    @property
+    def accessory_release(self) -> str:
+        return self._accessory_release
+
     def __repr__(self):
         def inspectobj(obj):
             if isinstance(obj,Enum):
@@ -158,6 +179,9 @@ class PanelStatus:
             release=response_entry.get('release'),
             cover_feature=response_entry.get('tappFeature'),
             scene_feature=response_entry.get('sceneFeature'),
+            push_feature=response_entry.get('pushFeature', False),
+            accessory_type=response_entry.get('tipo_accessorio', 'Unknown'),
+            accessory_release=response_entry.get('release_accessorio', 'Unknown'),
             zones=[Zone.from_api_response(x) for x in response_entry.get('zone', [])],
             actuators=[Actuator.from_api_response(x) for x in response_entry.get('uscite', [])],
             areas=[Area.from_api_response(x) for x in response_entry.get('aree', [])],
@@ -246,7 +270,7 @@ class EndpointStatus:
         return res
 
     @property
-    def supports_push_feature(self) -> bool:
+    def push_feature(self) -> bool:
         return self._push_feature
 
     @property
