@@ -24,3 +24,13 @@ The following code snippet illustrates how to login to the Elmax Cloud API, fetc
 zone status and toggle some actuator
 
    .. literalinclude:: ../../examples/basic.py
+
+Listen for push notifications
+=============================
+
+In order to listen for push notification events, it is just necessary to register a callback
+coroutine using a `PushNotificationHandler` helper object.
+
+The following example shows how to to so.
+
+   .. literalinclude:: ../../examples/push.py

@@ -1,3 +1,5 @@
+import json
+from enum import Enum
 from typing import Dict, List, Any
 
 from elmax_api.model.actuator import Actuator
@@ -135,6 +137,17 @@ class PanelStatus:
         res.extend(self.zones)
         res.extend(self.covers)
         return res
+
+    def __repr__(self):
+        def inspectobj(obj):
+            if isinstance(obj,Enum):
+                return obj.name
+            elif hasattr(obj, "__dict__"):
+                return vars(obj)
+            else:
+                return str(obj)
+
+        return json.dumps(self, default=inspectobj)
 
     @staticmethod
     def from_api_response(response_entry: Dict) -> 'PanelStatus':

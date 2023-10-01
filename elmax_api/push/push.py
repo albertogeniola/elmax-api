@@ -2,7 +2,8 @@ import asyncio
 import json
 import logging
 import ssl
-from asyncio import FIRST_COMPLETED, Event
+from asyncio import FIRST_COMPLETED, Event, Task, AbstractEventLoop
+from typing import Awaitable, Callable, Optional
 
 import websockets
 
@@ -14,8 +15,26 @@ _ERROR_WAIT_PERIOD = 15
 
 
 class PushNotificationHandler:
+    """
+    Helper class to listen for push notifications over a websocket.
+    Panels supporting push notification dispatching do expose a pushFeature=True.
+    """
+    _event_handlers: set[Callable[[PanelStatus], Awaitable[None]]]
+    _client: GenericElmax
+    _endpoint: str
+    _ssl_context: ssl.SSLContext
+    _should_run: bool
+    _task: Optional[Task]
+    _loop: Optional[AbstractEventLoop]
+    _stop_event: Event
 
     def __init__(self, endpoint: str, http_client: GenericElmax, ssl_context: ssl.SSLContext = None):
+        """
+        Constructor.
+        @param endpoint: panel push-notification websocket endpoint. It should start with ws:// or wss://. It should be wss://ELMAX_PANEL_IP/api/v2/push
+        @param http_client: instance of GenericElmax (or Elmax) object to use as http API client
+        @param ssl_context: custom ssl context configuration. Useful to accept self-signed certificates or similar.
+        """
         self._endpoint = endpoint
         self._client = http_client
         self._event_handlers = set()
@@ -24,25 +43,45 @@ class PushNotificationHandler:
         else:
             self._ssl_context = ssl_context
         self._should_run = False
+        self._stop_event = Event()
         self._task = None
         self._loop = None
-        self._stop_event = Event()
 
-    def register_push_notification_handler(self, coro):
+    def register_push_notification_handler(self, coro: Callable[[PanelStatus], Awaitable[None]]) -> None:
+        """
+        Registers a push notification handler coroutine. Every time a new event is received, that coro will be
+        invoked and awaited.
+        @param coro: callback coroutine which takes a PanelStatus object as argument
+        @return:
+        """
         if coro not in self._event_handlers:
             self._event_handlers.add(coro)
 
-    def unregister_push_notification_handler(self, coro):
+    def unregister_push_notification_handler(self, coro: Callable[[PanelStatus], Awaitable[None]]):
+        """
+        Unregisters the given coroutine callback from the event push notifications
+        @param coro: callback to unregister
+        @return:
+        """
         if coro in self._event_handlers:
             self._event_handlers.remove(coro)
 
-    def start(self, loop):
+    def start(self, loop: AbstractEventLoop):
+        """
+        Starts the push-notification loop handler task.
+        @param loop:
+        @return:
+        """
         self._stop_event.clear()
         self._should_run = True
         self._loop = loop
         self._task = loop.create_task(self._looper())
 
     def stop(self):
+        """
+        Stops the push-notification loop handler task.
+        @return:
+        """
         self._should_run = False
         self._stop_event.set()
 
@@ -88,5 +127,5 @@ class PushNotificationHandler:
             except Exception as e:
                 _LOGGER.exception("Error occurred when handling websocket connection. We will re-establish the "
                                   "connection in %d seconds.", _ERROR_WAIT_PERIOD)
-                await asyncio.sleep(_ERROR_WAIT_PERIOD, loop=self._loop)
+                await asyncio.sleep(_ERROR_WAIT_PERIOD)
 
