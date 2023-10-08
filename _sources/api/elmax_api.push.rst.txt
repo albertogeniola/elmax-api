@@ -1,0 +1,21 @@
+elmax\_api.push package
+=======================
+
+Submodules
+----------
+
+elmax\_api.push.push module
+---------------------------
+
+.. automodule:: elmax_api.push.push
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: elmax_api.push
+   :members:
+   :undoc-members:
+   :show-inheritance:
