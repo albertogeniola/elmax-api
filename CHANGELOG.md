@@ -1,5 +1,10 @@
 # CHANGELOG.md
 
+## v0.0.6
+
+Features:
+
+  - Fix websockets dependency issues
 
 ## v0.0.5
 
