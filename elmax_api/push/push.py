@@ -87,9 +87,17 @@ class PushNotificationHandler:
 
     async def _connect(self):
         token = await self._client.login()
-        return await websockets.connect(self._endpoint, ssl=self._ssl_context, extra_headers={
-            "Authorization": self._client._raw_jwt
-        })
+        index = self._endpoint.find('https')
+        if index == -1:
+            return await websockets.connect(self._endpoint, ssl=None, additional_headers={
+                "Authorization": self._client._raw_jwt
+            })
+        else:
+            return await websockets.connect(self._endpoint, ssl=self._ssl_context, additional_headers={
+                "Authorization": self._client._raw_jwt
+            })
+
+
 
     async def _notify_handlers(self, message):
         _LOGGER.debug("Handling message dispatching for handlers")
