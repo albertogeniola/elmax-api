@@ -1,5 +1,11 @@
 # CHANGELOG.md
 
+## v0.0.6.1
+
+Features:
+
+  - Relax websockets dependency to facilitate integration with other platforms
+
 ## v0.0.6
 
 Features:
