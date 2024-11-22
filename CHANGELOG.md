@@ -1,5 +1,12 @@
 # CHANGELOG.md
 
+## v0.0.6.2
+
+Features:
+
+  - Fix wrong protocol check to better handle https/wss endpoints with SSL
+
+
 ## v0.0.6.1
 
 Features:
