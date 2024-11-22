@@ -5,6 +5,7 @@
 Features:
 
   - Fix wrong protocol check to better handle https/wss endpoints with SSL
+  - Handle pipy dependency to explicitly point to the new asyncio implementation
 
 
 ## v0.0.6.1

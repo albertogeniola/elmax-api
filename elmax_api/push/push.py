@@ -5,7 +5,7 @@ import ssl
 from asyncio import FIRST_COMPLETED, Event, Task, AbstractEventLoop
 from typing import Awaitable, Callable, Optional
 
-import websockets
+from websockets.asyncio import client as ws_client
 
 from elmax_api.http import GenericElmax
 from elmax_api.model.panel import PanelStatus
@@ -89,15 +89,13 @@ class PushNotificationHandler:
         token = await self._client.login()
         index = self._endpoint.find('wss')
         if index == -1:
-            return await websockets.connect(self._endpoint, ssl=None, additional_headers={
+            return await ws_client.connect(self._endpoint, ssl=None, additional_headers={
                 "Authorization": self._client._raw_jwt
             })
         else:
-            return await websockets.connect(self._endpoint, ssl=self._ssl_context, additional_headers={
+            return await ws_client.connect(self._endpoint, ssl=self._ssl_context, additional_headers={
                 "Authorization": self._client._raw_jwt
             })
-
-
 
     async def _notify_handlers(self, message):
         _LOGGER.debug("Handling message dispatching for handlers")
