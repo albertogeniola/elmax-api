@@ -1,5 +1,10 @@
 # CHANGELOG.md
 
+## 0.0.6.3rc0
+
+  - Implement refresh token api
+  - Improve websocket connection handling
+
 ## v0.0.6.2
 
 Features:
