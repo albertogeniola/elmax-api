@@ -1,9 +1,10 @@
 # CHANGELOG.md
 
-## 0.0.6.3rc1
+## 0.0.6.3rc2
 
   - Implement refresh token api
   - Improve websocket connection handling
+  - Reduce wait time before reconnecting to websocket in case of connection drop
 
 ## v0.0.6.2
 

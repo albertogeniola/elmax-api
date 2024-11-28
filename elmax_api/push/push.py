@@ -13,7 +13,9 @@ from elmax_api.http import GenericElmax
 from elmax_api.model.panel import PanelStatus
 
 _LOGGER = logging.getLogger(__name__)
-_ERROR_WAIT_PERIOD = 15
+
+_WS_ERROR_COOLDOWN_SECONDS = 15
+_WS_DROP_COOLDOWN_SECONDS = 0
 
 
 class PushNotificationHandler:
@@ -156,9 +158,9 @@ class PushNotificationHandler:
                 raise
             except ConnectionClosedError as e:
                 _LOGGER.debug("Connection closed from the server.")
-                await asyncio.sleep(_ERROR_WAIT_PERIOD)
+                await asyncio.sleep(_WS_DROP_COOLDOWN_SECONDS)
             except Exception as e:
                 _LOGGER.exception("Error occurred when handling websocket connection. We will re-establish the "
-                                  "connection in %d seconds.", _ERROR_WAIT_PERIOD)
-                await asyncio.sleep(_ERROR_WAIT_PERIOD)
+                                  "connection in %d seconds.", _WS_ERROR_COOLDOWN_SECONDS)
+                await asyncio.sleep(_WS_ERROR_COOLDOWN_SECONDS)
 
