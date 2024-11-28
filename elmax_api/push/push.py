@@ -135,6 +135,8 @@ class PushNotificationHandler:
                 message = receive_waiter.result()
                 _LOGGER.debug("Push notification message received from websocket: %s", str(message))
                 await self._notify_handlers(message)
+            if not receive_waiter.cancelled() and not receive_waiter.cancelling():
+                receive_waiter.cancel()
 
     async def _looper(self):
         while self._should_run:
