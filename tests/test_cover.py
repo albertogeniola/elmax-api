@@ -81,7 +81,7 @@ async def test_open_close():
             command = CoverCommand.UP if curr_status==0 else CoverCommand.DOWN
             await client.execute_command(endpoint_id=endpoint_id, command=command)
             expected_position = 100 if command==CoverCommand.UP else 0
-            t = wait_for_cover_position(client=client, endpoint_id=endpoint_id, position=expected_position, timeout=30.0)
+            t = asyncio.create_task(wait_for_cover_position(client=client, endpoint_id=endpoint_id, position=expected_position, timeout=30.0))
             tasks.append(t)
 
         # Ensure all the actuators switched correctly
@@ -89,7 +89,6 @@ async def test_open_close():
         for t in done:
             if t.exception():
                 pytest.fail("One of the covers failed")
-                t.cancel()
 
 
 @pytest.mark.asyncio
@@ -109,7 +108,7 @@ async def test_up_down_states():
             command = CoverCommand.UP if curr_status==0 else CoverCommand.DOWN
             await client.execute_command(endpoint_id=endpoint_id, command=command)
             expected_status = CoverStatus.UP if command == CoverCommand.UP else CoverStatus.DOWN
-            t = wait_for_cover_status(client=client, endpoint_id=endpoint_id, status=expected_status,timeout=4.0)
+            t = asyncio.create_task(wait_for_cover_status(client=client, endpoint_id=endpoint_id, status=expected_status,timeout=4.0))
             tasks.append(t)
 
         # Ensure all the actuators switched correctly
@@ -117,4 +116,3 @@ async def test_up_down_states():
         for t in done:
             if t.exception():
                 pytest.fail("One of the covers failed")
-                t.cancel()
