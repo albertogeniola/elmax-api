@@ -10,6 +10,7 @@ ENDPOINT_LOGIN = "login"
 ENDPOINT_STATUS_ENTITY_ID = "status"
 ENDPOINT_DISCOVERY = "discovery"
 ENDPOINT_LOCAL_CMD = "cmd"
+ENDPOINT_REFRESH = "refresh"
 
 # User agent
 USER_AGENT = f"elmax-api/{__version__}"

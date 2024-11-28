@@ -4,9 +4,11 @@ import logging
 import ssl
 from asyncio import FIRST_COMPLETED, Event, Task, AbstractEventLoop
 from typing import Awaitable, Callable, Optional
-
+from datetime import datetime
 from websockets.asyncio import client as ws_client
+from websockets.exceptions import ConnectionClosedError
 
+from elmax_api.exceptions import ElmaxBadLoginError
 from elmax_api.http import GenericElmax
 from elmax_api.model.panel import PanelStatus
 
@@ -111,25 +113,48 @@ class PushNotificationHandler:
                 _LOGGER.exception("Error occurred when notifying a push-notification handler")
 
     async def _wait_for_messages(self, connection):
+        _TOKEN_RENEW_INTERVAL = 30
         while self._should_run:
+            # Calculate how much time we have before the token expires. If necessary, renew the token right-away
+            seconds_remaining = self._client.token_expiration_time - datetime.now().timestamp()
+            if seconds_remaining <= _TOKEN_RENEW_INTERVAL:
+                _LOGGER.debug("Renewing token as it is close to the expiration deadline")
+                await self._client.renew_token()
+                _LOGGER.debug("Token has been renewed")
+
+            # Wait for a new message to be received, a stop event or a timeout (driven by the token expiration)
             stop_event_waiter = self._loop.create_task(self._stop_event.wait())
             receive_waiter = self._loop.create_task(connection.recv())
-            done, pending = await asyncio.wait([receive_waiter, stop_event_waiter], return_when=FIRST_COMPLETED)
+            deadline = seconds_remaining-_TOKEN_RENEW_INTERVAL
+            done, pending = await asyncio.wait([receive_waiter, stop_event_waiter], return_when=FIRST_COMPLETED, timeout=deadline)
             if stop_event_waiter in done:
                 _LOGGER.info("Push notification handler has received stop signal. Aborting wait for messages...")
                 receive_waiter.cancel()
                 return
-            message = receive_waiter.result()
-            _LOGGER.debug("Push notification message received from websocket: %s", str(message))
-            await self._notify_handlers(message)
+            if receive_waiter in done:
+                message = receive_waiter.result()
+                _LOGGER.debug("Push notification message received from websocket: %s", str(message))
+                await self._notify_handlers(message)
 
     async def _looper(self):
         while self._should_run:
             _LOGGER.debug("Push Notification looper has started.")
+            # Verify the token we have is still valid or if it's going to expire soon.
+            # If expired, issue a login. If still valid, but close to expiration, renew it.
+            if datetime.now().timestamp() >= self._client.token_expiration_time:
+                _LOGGER.debug("Token expired. Issuing a new login.")
+                await self._client.login() # In case of login error, we must abort and terminate.
             try:
                 connection = await self._connect()
                 _LOGGER.debug("Push Notification looper has connected successfully to the websocket. Waiting for messages...")
                 await self._wait_for_messages(connection)
+            except ElmaxBadLoginError as e:
+                _LOGGER.error("Websocket connection failed: token was expired and we were unable to "
+                              "login again.")
+                raise
+            except ConnectionClosedError as e:
+                _LOGGER.debug("Connection closed from the server.")
+                await asyncio.sleep(_ERROR_WAIT_PERIOD)
             except Exception as e:
                 _LOGGER.exception("Error occurred when handling websocket connection. We will re-establish the "
                                   "connection in %d seconds.", _ERROR_WAIT_PERIOD)

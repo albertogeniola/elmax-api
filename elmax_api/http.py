@@ -16,7 +16,8 @@ import jwt
 from yarl import URL
 
 from elmax_api.constants import BASE_URL, ENDPOINT_LOGIN, USER_AGENT, ENDPOINT_DEVICES, ENDPOINT_DISCOVERY, \
-    ENDPOINT_STATUS_ENTITY_ID, DEFAULT_HTTP_TIMEOUT, BUSY_WAIT_INTERVAL, ENDPOINT_LOCAL_CMD, DEFAULT_PANEL_PIN
+    ENDPOINT_REFRESH, ENDPOINT_STATUS_ENTITY_ID, DEFAULT_HTTP_TIMEOUT, BUSY_WAIT_INTERVAL, ENDPOINT_LOCAL_CMD, \
+    DEFAULT_PANEL_PIN
 from elmax_api.exceptions import ElmaxBadLoginError, ElmaxApiError, ElmaxNetworkError, ElmaxBadPinError, \
     ElmaxPanelBusyError
 from elmax_api.model.command import Command
@@ -49,13 +50,13 @@ def async_auth(func, *method_args, **method_kwargs):
         assert isinstance(_instance, GenericElmax)
         exp_time = _instance.token_expiration_time
         if exp_time == 0:
-            _LOGGER.warning("The API client was not authorized yet. Login will be attempted.")
+            _LOGGER.debug("The API client was not authorized yet. Login will be attempted.")
             await _instance.login()
         elif exp_time < 0:
-            _LOGGER.warning("The API client token is expired. Login will be attempted.")
+            _LOGGER.debug("The API client token is expired. Login will be attempted.")
             await _instance.login()
-        elif (exp_time - now) < 600:
-            _LOGGER.info(
+        elif (exp_time - now) < 60:
+            _LOGGER.debug(
                 "The API client token is going to be expired soon. "
                 "Login will be attempted right now to refresh it."
             )
@@ -273,6 +274,14 @@ class GenericElmax(ABC):
         raise NotImplemented()
 
     @abstractmethod
+    async def renew_token(self, *args, **kwargs) -> Dict:
+        """
+        Renews the token used by the API client.
+
+        """
+        raise NotImplemented()
+
+    @abstractmethod
     @async_auth
     async def get_current_panel_status(self, *args, **kwargs) -> PanelStatus:
         """
@@ -383,6 +392,13 @@ class Elmax(GenericElmax):
         for response_entry in response_data:
             res.append(PanelEntry.from_api_response(response_entry=response_entry))
         return res
+
+    async def renew_token(self, *args, **kwargs) -> Dict:
+        """
+        Renews the token used by the API client.
+        This implementation simply triggers a new login and return the JWT to the caller
+        """
+        return await self.login()
 
     async def login(self, *args, **kwargs) -> Dict:
         """
@@ -505,6 +521,42 @@ class ElmaxLocal(GenericElmax):
         # The current version of the local API does not expose the panel ID attribute,
         # so we use the panel IP as ID
         self.set_current_panel(panel_id=panel_api_url, panel_pin=panel_code)
+
+    async def renew_token(self, *args, **kwargs) -> Dict:
+        """
+        Renews the token used by the API client.
+        This implementation invokes the specific URL to renew the token
+        """
+        url = self._base_url / ENDPOINT_REFRESH
+
+        try:
+            response_data = await self._request(
+                method=Elmax.HttpMethod.POST, url=url, authorized=True
+            )
+        except ElmaxApiError as e:
+            if e.status_code in (401, 403):
+                raise ElmaxBadLoginError()
+            raise
+
+        if "token" not in response_data:
+            raise ValueError("Missing token parameter in json response")
+
+        jwt_token = response_data["token"]
+        if not jwt_token.startswith("JWT "):
+            raise ValueError("API did not return JWT token as expected")
+        jt = jwt_token.split("JWT ")[1]
+
+        # We do not need to verify the signature as this is usually something the server
+        # needs to do. We will just decode it to get information about user/claims.
+        # Moreover, since the JWT is obtained over a HTTPS channel, we do not need to verify
+        # its integrity/confidentiality as the ssl does this for us
+        self._jwt = jwt.decode(
+            jt, algorithms=_JWT_ALGS, options={"verify_signature": False}
+        )
+        self._raw_jwt = (
+            jt  # keep an encoded version of the JWT for convenience and performance
+        )
+        return self._jwt
 
     async def login(self, *args, **kwargs) -> Dict:
         """
