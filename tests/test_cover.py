@@ -8,8 +8,7 @@ from elmax_api.http import GenericElmax
 from elmax_api.model.command import CoverCommand
 from elmax_api.model.cover import Cover
 from elmax_api.model.cover_status import CoverStatus
-from elmax_api.model.panel import PanelStatus, PanelEntry
-from tests import client, LOCAL_TEST
+from elmax_api.model.panel import PanelStatus
 
 
 async def wait_for_cover_status(client: GenericElmax, endpoint_id: str, status: CoverStatus, timeout: float) -> bool:
@@ -43,26 +42,9 @@ async def wait_for_cover_position(client: GenericElmax, endpoint_id: str, positi
     raise TimeoutError()
 
 
-def setup_module(module):
-    if not LOCAL_TEST:
-        panels = asyncio.run(client.list_control_panels())
-        online_panels = list(filter(lambda x: x.online, panels))
-        assert len(online_panels) > 0
-
-        # Select the first online panel which has covers
-        panel_found = False
-        for panel in online_panels:
-            panel_status = asyncio.run(client.get_panel_status(panel.hash))
-            if len(panel_status.covers) > 0:
-                panel_found = True
-                client.set_current_panel(panel_id=panel.hash)
-                break
-
-        if not panel_found:
-            pytest.skip("No panel found to run this test set.")
-
 @pytest.mark.asyncio
 async def test_open_close():
+    client = await async_init_test_covers()
     # Do this twice so we toggle every cover up->down and down ->up
     for i in range(2):
         # Retrieve its status
@@ -93,6 +75,7 @@ async def test_open_close():
 
 @pytest.mark.asyncio
 async def test_up_down_states():
+    client = await async_init_test_covers()
     # Do this twice so we toggle every cover up->down and down ->up
     for i in range(2):
         # Retrieve its status

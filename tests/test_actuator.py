@@ -4,24 +4,13 @@ import asyncio
 import pytest
 
 from elmax_api.model.command import SwitchCommand
-from elmax_api.model.panel import PanelStatus, PanelEntry
-from tests import client, LOCAL_TEST
-
-
-def setup_module(module):
-
-    if not LOCAL_TEST:
-        panels = asyncio.run(client.list_control_panels())
-        online_panels = list(filter(lambda x: x.online, panels))
-        assert len(online_panels) > 0
-
-        # Select the first online panel
-        entry = online_panels[0]  # type:PanelEntry
-        client.set_current_panel(panel_id=entry.hash)
+from elmax_api.model.panel import PanelStatus
+from tests.conftest import async_init_test
 
 
 @pytest.mark.asyncio
 async def test_device_command():
+    client = await async_init_test()
     # Retrieve its status
     panel = await client.get_current_panel_status()  # type: PanelStatus
     assert isinstance(panel, PanelStatus)

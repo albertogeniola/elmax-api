@@ -1,10 +1,13 @@
 """Test the authentication process."""
 
-import pytest
 import asyncio
+
+import pytest
+
 from elmax_api.exceptions import ElmaxBadLoginError
 from elmax_api.http import ElmaxLocal, Elmax
-from tests import client, LOCAL_TEST, LOCAL_API_URL, PANEL_PIN
+from tests import LOCAL_TEST, LOCAL_API_URL, PANEL_PIN
+from tests.conftest import async_init_test
 
 BAD_USERNAME = "thisIsWrong@gmail.com"
 BAD_PASSWORD = "fakePassword"
@@ -20,16 +23,17 @@ async def test_wrong_credentials():
 
 @pytest.mark.asyncio
 async def test_good_credentials():
+    client = await async_init_test()
     jwt_data = await client.login()
     assert isinstance(jwt_data, dict)
 
     username = client.get_authenticated_username()
-    # TODO: parametrize the following control
-    #assert username == USERNAME
+    assert username is not None
 
 
 @pytest.mark.asyncio
 async def test_token_renew():
+    client = await async_init_test()
     jwt_data = await client.login()
     assert isinstance(jwt_data, dict)
     old_expiration = client.token_expiration_time

@@ -1,5 +1,4 @@
 """Test control panel functionalities."""
-import asyncio
 
 import pytest
 
@@ -12,42 +11,31 @@ from elmax_api.model.goup import Group
 from elmax_api.model.panel import PanelStatus
 from elmax_api.model.scene import Scene
 from elmax_api.model.zone import Zone
-from tests import client, LOCAL_TEST
-
-
-def setup_module(module):
-    if not LOCAL_TEST:
-        panels = asyncio.run(client.list_control_panels())
-        online_panels = list(filter(lambda x: x.online, panels))
-        assert len(online_panels) > 0
-
-        # Select the first online panel
-        entry = online_panels[0]
-        client.set_current_panel(panel_id=entry.hash)
+from tests import LOCAL_TEST
+from tests.conftest import async_init_test
 
 
 @pytest.mark.asyncio
 async def test_list_control_panels():
+    client = await async_init_test()
     if LOCAL_TEST:
         pytest.skip("Skipping test_list_control_panels as testing local API")
-        return
+
     panels = await client.list_control_panels()
     assert len(panels) > 0
 
 
 @pytest.mark.asyncio
 async def test_get_control_panel_status():
+    client = await async_init_test()
     # Retrieve its status
     status = await client.get_current_panel_status()  # type: PanelStatus
     assert isinstance(status, PanelStatus)
 
-    # Make sure the username matches the one used by the client
-    # TODO: parametrize the following check
-    #assert status.user_email == USERNAME
-
 
 @pytest.mark.asyncio
 async def test_wrong_pin():
+    client = await async_init_test()
     if LOCAL_TEST:
         pytest.skip("Skipping bad pin test for LOCAL API tests")
     panels = await client.list_control_panels()
@@ -68,6 +56,7 @@ async def test_wrong_pin():
 
 @pytest.mark.asyncio
 async def test_single_device_status():
+    client = await async_init_test()
     # Retrieve its status
     status = await client.get_current_panel_status()  # type: PanelStatus
     assert isinstance(status, PanelStatus)

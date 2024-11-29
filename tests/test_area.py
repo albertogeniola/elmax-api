@@ -5,26 +5,15 @@ import pytest
 
 from elmax_api.constants import DEFAULT_PANEL_PIN
 from elmax_api.exceptions import ElmaxApiError
+from elmax_api.http import Elmax
 from elmax_api.model.alarm_status import AlarmStatus, AlarmArmStatus
 from elmax_api.model.area import Area
 from elmax_api.model.command import AreaCommand
-from elmax_api.model.panel import PanelStatus, PanelEntry
-from tests import client, LOCAL_TEST
+from elmax_api.model.panel import PanelStatus
+from tests.conftest import async_init_test
 
 
-def setup_module(module):
-
-    if not LOCAL_TEST:
-        panels = asyncio.run(client.list_control_panels())
-        online_panels = list(filter(lambda x: x.online, panels))
-        assert len(online_panels) > 0
-
-        # Select the first online panel
-        entry = online_panels[0]  # type:PanelEntry
-        client.set_current_panel(panel_id=entry.hash)
-
-
-async def get_area(only_armable=False):
+async def get_area(client: Elmax, only_armable=False):
     # Retrieve current area status
     panel = await client.get_current_panel_status()
     assert isinstance(panel, PanelStatus)
@@ -40,7 +29,7 @@ async def get_area(only_armable=False):
         return a[0]
 
 
-async def reset_area_status(area: Area, command: AreaCommand, expected_arm_status: AlarmArmStatus, code: str = DEFAULT_PANEL_PIN) -> Area:
+async def reset_area_status(client:Elmax, area: Area, command: AreaCommand, expected_arm_status: AlarmArmStatus, code: str = DEFAULT_PANEL_PIN) -> Area:
     res = await client.execute_command(endpoint_id=area.endpoint_id, command=command, extra_payload={"code": code})
 
     attempts = 0
@@ -59,15 +48,16 @@ async def reset_area_status(area: Area, command: AreaCommand, expected_arm_statu
 
 @pytest.mark.asyncio
 async def test_area_wrong_disarm_code():
-    area = await get_area(only_armable=True)
+    client = await async_init_test()
+    area = await get_area(client, only_armable=True)
     if area is None:
         pytest.skip("No armable areas found to test")
     if area.armed_status != AlarmArmStatus.NOT_ARMED:
-        await reset_area_status(area=area, command=AreaCommand.DISARM, expected_arm_status=AlarmArmStatus.NOT_ARMED)
+        await reset_area_status(client, area=area, command=AreaCommand.DISARM, expected_arm_status=AlarmArmStatus.NOT_ARMED)
 
     # ARM TOTALLY
-    area = await get_area()
-    area = await reset_area_status(area=area, command=AreaCommand.ARM_TOTALLY, expected_arm_status=AlarmArmStatus.ARMED_TOTALLY)
+    area = await get_area(client)
+    area = await reset_area_status(client, area=area, command=AreaCommand.ARM_TOTALLY, expected_arm_status=AlarmArmStatus.ARMED_TOTALLY)
 
     # Check status
     assert area.status == AlarmStatus.ARMED_STANDBY
@@ -75,7 +65,7 @@ async def test_area_wrong_disarm_code():
     # Disarm with wrong code
     error403 = False
     try:
-        area = await reset_area_status(area=area, command=AreaCommand.DISARM, expected_arm_status=AlarmArmStatus.NOT_ARMED, code="999999")
+        area = await reset_area_status(client, area=area, command=AreaCommand.DISARM, expected_arm_status=AlarmArmStatus.NOT_ARMED, code="999999")
     except ElmaxApiError as e:
         error403 = e.status_code == 403
 
@@ -87,16 +77,17 @@ async def test_area_wrong_disarm_code():
 
 @pytest.mark.asyncio
 async def test_area_arming_totally():
+    client = await async_init_test()
     # Make sure the area is disarmed
-    area = await get_area(only_armable=True)
+    area = await get_area(client, only_armable=True)
     if area is None:
         pytest.skip("No armable areas found to test")
     if area.armed_status != AlarmArmStatus.NOT_ARMED:
-        await reset_area_status(area=area, command=AreaCommand.DISARM, expected_arm_status=AlarmArmStatus.NOT_ARMED)
+        await reset_area_status(client, area=area, command=AreaCommand.DISARM, expected_arm_status=AlarmArmStatus.NOT_ARMED)
 
     # ARM TOTALLY
-    area = await get_area()
-    area = await reset_area_status(area=area, command=AreaCommand.ARM_TOTALLY, expected_arm_status=AlarmArmStatus.ARMED_TOTALLY)
+    area = await get_area(client)
+    area = await reset_area_status(client, area=area, command=AreaCommand.ARM_TOTALLY, expected_arm_status=AlarmArmStatus.ARMED_TOTALLY)
 
     # Check status
     assert area.status == AlarmStatus.ARMED_STANDBY
@@ -104,16 +95,17 @@ async def test_area_arming_totally():
 
 @pytest.mark.asyncio
 async def test_area_disarm():
+    client = await async_init_test()
     # Make sure the area is armed first
-    area = await get_area(only_armable=True)
+    area = await get_area(client, only_armable=True)
     if area is None:
         pytest.skip("No armable areas found to test")
     if area.armed_status != AlarmArmStatus.ARMED_TOTALLY:
-        await reset_area_status(area=area, command=AreaCommand.ARM_TOTALLY, expected_arm_status=AlarmArmStatus.ARMED_TOTALLY)
+        await reset_area_status(client, area=area, command=AreaCommand.ARM_TOTALLY, expected_arm_status=AlarmArmStatus.ARMED_TOTALLY)
 
     # DISARM
-    area = await get_area()
-    area = await reset_area_status(area=area, command=AreaCommand.DISARM,
+    area = await get_area(client)
+    area = await reset_area_status(client, area=area, command=AreaCommand.DISARM,
                                    expected_arm_status=AlarmArmStatus.NOT_ARMED)
 
     # Check status
