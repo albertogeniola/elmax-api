@@ -9,6 +9,7 @@ from elmax_api.model.command import CoverCommand
 from elmax_api.model.cover import Cover
 from elmax_api.model.cover_status import CoverStatus
 from elmax_api.model.panel import PanelStatus
+from tests.conftest import async_init_test_cover
 
 
 async def wait_for_cover_status(client: GenericElmax, endpoint_id: str, status: CoverStatus, timeout: float) -> bool:
@@ -44,7 +45,7 @@ async def wait_for_cover_position(client: GenericElmax, endpoint_id: str, positi
 
 @pytest.mark.asyncio
 async def test_open_close():
-    client = await async_init_test_covers()
+    client = await async_init_test_cover()
     # Do this twice so we toggle every cover up->down and down ->up
     for i in range(2):
         # Retrieve its status
@@ -75,7 +76,7 @@ async def test_open_close():
 
 @pytest.mark.asyncio
 async def test_up_down_states():
-    client = await async_init_test_covers()
+    client = await async_init_test_cover()
     # Do this twice so we toggle every cover up->down and down ->up
     for i in range(2):
         # Retrieve its status

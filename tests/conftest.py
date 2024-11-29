@@ -54,3 +54,5 @@ async def async_init_test_cover() -> Elmax:
 
     if not panel_found:
         pytest.skip("No panel found to run this test set.")
+
+    return client
