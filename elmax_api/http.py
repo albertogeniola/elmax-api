@@ -3,6 +3,7 @@ This module handles HTTP api calls to the Elmax WEB endpoint, implemented by the
 """
 
 import asyncio
+import datetime
 import functools
 import logging
 import ssl
@@ -14,10 +15,11 @@ from abc import ABC, abstractmethod
 import httpx
 import jwt
 from yarl import URL
+from packaging import version
 
 from elmax_api.constants import BASE_URL, ENDPOINT_LOGIN, USER_AGENT, ENDPOINT_DEVICES, ENDPOINT_DISCOVERY, \
     ENDPOINT_REFRESH, ENDPOINT_STATUS_ENTITY_ID, DEFAULT_HTTP_TIMEOUT, BUSY_WAIT_INTERVAL, ENDPOINT_LOCAL_CMD, \
-    DEFAULT_PANEL_PIN
+    DEFAULT_PANEL_PIN, VERSION_REFRESH_SUPPORT
 from elmax_api.exceptions import ElmaxBadLoginError, ElmaxApiError, ElmaxNetworkError, ElmaxBadPinError, \
     ElmaxPanelBusyError
 from elmax_api.model.command import Command
@@ -33,6 +35,8 @@ async def helper(f, *args, **kwargs):
     else:
         return f(*args, **kwargs)
 
+
+_MIN_VERSION_REFRESH_SUPPORT = version.parse(VERSION_REFRESH_SUPPORT)
 
 def async_auth(func, *method_args, **method_kwargs):
     """
@@ -60,7 +64,7 @@ def async_auth(func, *method_args, **method_kwargs):
                 "The API client token is going to be expired soon. "
                 "Login will be attempted right now to refresh it."
             )
-            await _instance.login()
+            await _instance.renew_token()
         # At this point, we assume the client has a valid token to use for authorized APIs. So let's use it.
         result = await helper(func, *args, **kwargs)
         return result
@@ -521,12 +525,18 @@ class ElmaxLocal(GenericElmax):
         # The current version of the local API does not expose the panel ID attribute,
         # so we use the panel IP as ID
         self.set_current_panel(panel_id=panel_api_url, panel_pin=panel_code)
+        self._cached_current_panel_status: Optional[PanelStatus] = None
 
+    @async_auth
     async def renew_token(self, *args, **kwargs) -> Dict:
         """
         Renews the token used by the API client.
         This implementation invokes the specific URL to renew the token
         """
+        if not self.supports_token_refresh:
+            _LOGGER.debug("Current panel does not support token refresh. Re-issuing a login.")
+            return await self.login()
+
         url = self._base_url / ENDPOINT_REFRESH
 
         try:
@@ -646,4 +656,17 @@ class ElmaxLocal(GenericElmax):
                 raise
 
         panel_status = PanelStatus.from_api_response(response_entry=response_data)
+        self._cached_current_panel_status = panel_status
         return panel_status
+
+    @property
+    def last_cached_panel_status(self) -> Optional[PanelStatus]:
+        return self._cached_current_panel_status
+
+    @property
+    def supports_token_refresh(self) -> bool:
+        if self.last_cached_panel_status is not None:
+            return version.parse(self.last_cached_panel_status.accessory_release) >= _MIN_VERSION_REFRESH_SUPPORT
+
+        _LOGGER.warning("No cached panel status. Could not determine the version of the panel")
+        return False

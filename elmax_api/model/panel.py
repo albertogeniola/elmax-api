@@ -2,6 +2,8 @@ import json
 from enum import Enum
 from typing import Dict, List, Any
 
+import packaging.version
+
 from elmax_api.model.actuator import Actuator
 from elmax_api.model.area import Area
 from elmax_api.model.cover import Cover
