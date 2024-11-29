@@ -1,7 +1,7 @@
 """Client for the Elmax Cloud services."""
 
 __name__ = "elmax_api"
-__version__ = "0.0.6.3rc2"
+__version__ = "0.0.6.3"
 __license__ = "MIT"
 __url__ = "https://github.com/albertogeniola/elmax-api"
 __author__ = "Alberto Geniola"

@@ -1,10 +1,11 @@
 # CHANGELOG.md
 
-## 0.0.6.3rc2
+## 0.0.6.3
 
-  - Implement refresh token api
+  - Implement refresh token api for panels with version > 4.13.2
   - Improve websocket connection handling
   - Reduce wait time before reconnecting to websocket in case of connection drop
+  - Improve tests
 
 ## v0.0.6.2
 
