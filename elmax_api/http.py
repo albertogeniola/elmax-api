@@ -527,12 +527,15 @@ class ElmaxLocal(GenericElmax):
         self.set_current_panel(panel_id=panel_api_url, panel_pin=panel_code)
         self._cached_current_panel_status: Optional[PanelStatus] = None
 
-    @async_auth
     async def renew_token(self, *args, **kwargs) -> Dict:
         """
         Renews the token used by the API client.
         This implementation invokes the specific URL to renew the token
         """
+        if not self.is_authenticated or datetime.datetime.now().timestamp() >= self.token_expiration_time:
+            _LOGGER.error("Trying to invoke renew_token() without a valid token.")
+            raise ElmaxBadLoginError()
+
         if not self.supports_token_refresh:
             _LOGGER.debug("Current panel does not support token refresh. Re-issuing a login.")
             return await self.login()
