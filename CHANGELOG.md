@@ -1,5 +1,11 @@
 # CHANGELOG.md
 
+## 0.0.6.4rc0
+
+Features:
+
+  - Fix recursion issue happening at token expiration time
+
 ## 0.0.6.3
 
   - Implement refresh token api for panels with version > 4.13.2
